@@ -287,3 +287,13 @@ Each entry records the decision, the alternatives considered and why this one wa
   - **the engine,** delivery-desk;
   - **the local project folder name,** `delivery-desk-app`, because its Python environment has that path built in. The same arrangement as manifest-doctor's local `delivery-verify` folder. The public repository is `clearsum`.
 - **Tested first:** the tests were changed to expect "ClearSum" (window title, Credential Manager name, settings folder, `ClearSum.exe`) and failed until the app was changed. 112 tests now pass, and a fresh `ClearSum.exe` passed its self-test.
+
+## 2026-10-11: The build carries no trace of the computer it was built on
+
+- **Found before publishing:** a scan of the zip showed that the compiled copies (`__pycache__`) of the bundled engine had recorded the build computer's project folder.
+- **Fix:** the build ships only the engine's plain `.py` source files. Python makes compiled copies on the user's own computer as needed.
+- **Guard:**
+  - a test, and `packaging/build.py` itself, scan every file in the build for the build computer's project folder and home folder;
+  - those folders are worked out at run time, so no personal path is written into the repository;
+  - **the build refuses to zip if any trace is found.**
+- **Not a concern:** the "gmail" addresses inside third-party libraries' metadata and Python itself belong to their own maintainers.

@@ -66,3 +66,10 @@ def test_the_built_app_carries_its_licence_and_the_notices():
     folder = BUILT.parent / "_internal"
     assert (folder / "LICENSE").is_file()
     assert "=== pywebview " in (folder / "THIRD-PARTY-NOTICES.txt").read_text(encoding="utf-8")
+
+
+@pytest.mark.skipif(not BUILT.exists(), reason="the app hasn't been built (packaging/build.py)")
+def test_the_built_app_holds_no_trace_of_the_computer_it_was_built_on():
+    sys.path.insert(0, str(ROOT / "packaging"))
+    from build import local_traces
+    assert local_traces(BUILT.parent) == []

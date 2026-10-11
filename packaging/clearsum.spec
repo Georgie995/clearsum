@@ -24,7 +24,11 @@ hidden += collect_submodules("keyring.backends")   # Credential Manager is found
 
 datas = [(str(ROOT / "clearsum" / "web"), "clearsum/web")]
 # The engine's source also travels as plain folders: the engine checks those folders exist.
-datas += [(str(parent / package), f"engine/{package}") for package, parent in ENGINE.items()]
+# Only the .py source files: compiled copies (__pycache__) record the folder they were compiled in.
+for package, parent in ENGINE.items():
+    for source in (parent / package).rglob("*.py"):
+        inside = source.parent.relative_to(parent / package).as_posix()
+        datas.append((str(source), f"engine/{package}" + ("" if inside == "." else f"/{inside}")))
 datas += copy_metadata("keyring")                  # keyring discovers its backends from this
 datas += [(str(ROOT / "LICENSE"), "."), (str(ROOT / "packaging" / "THIRD-PARTY-NOTICES.txt"), ".")]
 
