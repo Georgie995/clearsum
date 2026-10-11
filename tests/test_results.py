@@ -2,7 +2,7 @@
 
 import json
 
-from delivery_desk_app import results
+from clearsum import results
 
 
 def finding(code, path, severity="ERROR", detail=""):

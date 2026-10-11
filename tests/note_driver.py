@@ -12,9 +12,9 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import webview  # noqa: E402
 
 from check_driver import make_deliveries, run_check, wait_for  # noqa: E402
-from delivery_desk_app.app import bind_drops, create_window  # noqa: E402
-from delivery_desk_app.bridge import Bridge  # noqa: E402
-from delivery_desk_app.secret_store import SecretStore  # noqa: E402
+from clearsum.app import bind_drops, create_window  # noqa: E402
+from clearsum.bridge import Bridge  # noqa: E402
+from clearsum.secret_store import SecretStore  # noqa: E402
 from window_driver import FakeKeyring  # noqa: E402
 
 ANSWERS = [

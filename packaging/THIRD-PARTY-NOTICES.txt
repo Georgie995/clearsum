@@ -1,5 +1,5 @@
 Delivery Desk bundles the following third-party software. Each is listed with its licence.
-The bundled fonts' licences (SIL Open Font License 1.1) are in delivery_desk_app/web/fonts.
+The bundled fonts' licences (SIL Open Font License 1.1) are in clearsum/web/fonts.
 
 === Python 3.13.7 ===
 A. HISTORY OF THE SOFTWARE

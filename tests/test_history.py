@@ -5,8 +5,8 @@ from datetime import datetime
 
 import pytest
 
-from delivery_desk_app import history, paths
-from delivery_desk_app.bridge import Bridge
+from clearsum import history, paths
+from clearsum.bridge import Bridge
 
 pytestmark = pytest.mark.skipif(not (paths.DELIVERY_DESK / "delivery_desk").is_dir(),
                                 reason="delivery-desk must sit next to the app")

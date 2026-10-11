@@ -5,7 +5,7 @@ import threading
 import time
 from types import SimpleNamespace
 
-from delivery_desk_app.checking import CheckRun
+from clearsum.checking import CheckRun
 
 
 def outcome(code=1, result="PROBLEMS FOUND", folder="report-2026", note=True, stopped=False):

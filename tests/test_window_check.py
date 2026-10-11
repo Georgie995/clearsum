@@ -9,7 +9,7 @@ from pathlib import Path
 
 import pytest
 
-from delivery_desk_app import paths
+from clearsum import paths
 
 DRIVER = Path(__file__).with_name("check_driver.py")
 

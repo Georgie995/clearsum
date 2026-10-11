@@ -2,7 +2,7 @@
 
 import pytest
 
-from delivery_desk_app.secret_store import SecretStore
+from clearsum.secret_store import SecretStore
 
 
 class FakeKeyring:

@@ -17,12 +17,12 @@ ENGINE = {                               # bundled so the app needs nothing else
 for folder in [ROOT, *ENGINE.values()]:
     sys.path.insert(0, str(folder))      # so the engine's own imports are found and bundled
 
-hidden = ["delivery_desk_app"] + collect_submodules("delivery_desk_app")
+hidden = ["clearsum"] + collect_submodules("clearsum")
 for package in ENGINE:
     hidden += [package] + collect_submodules(package)
 hidden += collect_submodules("keyring.backends")   # Credential Manager is found through these
 
-datas = [(str(ROOT / "delivery_desk_app" / "web"), "delivery_desk_app/web")]
+datas = [(str(ROOT / "clearsum" / "web"), "clearsum/web")]
 # The engine's source also travels as plain folders: the engine checks those folders exist.
 datas += [(str(parent / package), f"engine/{package}") for package, parent in ENGINE.items()]
 datas += copy_metadata("keyring")                  # keyring discovers its backends from this

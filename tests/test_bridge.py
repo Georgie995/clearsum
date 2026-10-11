@@ -4,7 +4,7 @@ import json
 
 import pytest
 
-from delivery_desk_app.bridge import Bridge
+from clearsum.bridge import Bridge
 
 
 @pytest.fixture

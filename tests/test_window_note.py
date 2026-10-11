@@ -10,7 +10,7 @@ from urllib.parse import unquote
 
 import pytest
 
-from delivery_desk_app import paths
+from clearsum import paths
 
 DRIVER = Path(__file__).with_name("note_driver.py")
 

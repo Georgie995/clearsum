@@ -33,7 +33,7 @@ def runtime_distributions():
 
 def notices_text():
     parts = ["Delivery Desk bundles the following third-party software. Each is listed with its licence.\n",
-             "The bundled fonts' licences (SIL Open Font License 1.1) are in delivery_desk_app/web/fonts.\n"]
+             "The bundled fonts' licences (SIL Open Font License 1.1) are in clearsum/web/fonts.\n"]
     python_licence = Path(sys.base_prefix) / "LICENSE.txt"
     parts.append(f"\n=== Python {sys.version.split()[0]} ===\n" + python_licence.read_text(encoding="utf-8", errors="replace"))
     for name in runtime_distributions():

@@ -2,7 +2,7 @@
 
 import pytest
 
-from delivery_desk_app.secret_store import SERVICE, SecretError
+from clearsum.secret_store import SERVICE, SecretError
 
 
 def test_a_saved_secret_is_reported_as_saved_but_its_value_is_never_given_back(secrets):

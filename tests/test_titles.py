@@ -5,7 +5,7 @@ from pathlib import Path
 
 import pytest
 
-from delivery_desk_app import titles
+from clearsum import titles
 
 DOCTOR = Path(__file__).resolve().parents[2] / "delivery-verify"
 

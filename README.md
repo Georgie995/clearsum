@@ -81,7 +81,7 @@ ENGINE    my earlier tools, unchanged in what they decide:
   python -m venv .venv
   .venv\Scripts\python -m pip install pywebview==6.2.1 keyring==25.7.0 pytest pyinstaller==6.22.3
   ```
-- **Run:** `.venv\Scripts\python -m delivery_desk_app`, or double-click `run-app.bat`.
+- **Run:** `.venv\Scripts\python -m clearsum`, or double-click `run-app.bat`.
 - **Test:** `.venv\Scripts\python -m pytest`.
   - **110 tests,** including real checks driven through the real window. Window tests open the app for a few seconds.
   - **Skips:** tests that need the sibling repos or a built app are skipped when those are absent.
@@ -137,4 +137,4 @@ What I did:
 
 ## Licence
 
-[MIT](LICENSE) © 2026 Georgi Stoyanov. The packaged app also carries third-party software under its own licences: see [THIRD-PARTY-NOTICES.txt](packaging/THIRD-PARTY-NOTICES.txt). The bundled fonts (Newsreader, Instrument Sans, IBM Plex Mono) are under the SIL Open Font License 1.1, with their licences in `delivery_desk_app/web/fonts`.
+[MIT](LICENSE) © 2026 Georgi Stoyanov. The packaged app also carries third-party software under its own licences: see [THIRD-PARTY-NOTICES.txt](packaging/THIRD-PARTY-NOTICES.txt). The bundled fonts (Newsreader, Instrument Sans, IBM Plex Mono) are under the SIL Open Font License 1.1, with their licences in `clearsum/web/fonts`.

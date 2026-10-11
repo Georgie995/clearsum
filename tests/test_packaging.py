@@ -12,7 +12,7 @@ from pathlib import Path
 
 import pytest
 
-from delivery_desk_app import paths
+from clearsum import paths
 
 ROOT = Path(__file__).resolve().parents[1]
 LAUNCHER = ROOT / "packaging" / "launcher.py"

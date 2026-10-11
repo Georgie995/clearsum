@@ -4,8 +4,8 @@ import json
 
 import pytest
 
-from delivery_desk_app import settings_store as store
-from delivery_desk_app.settings_store import SettingsError
+from clearsum import settings_store as store
+from clearsum.settings_store import SettingsError
 
 
 def test_with_no_settings_file_the_defaults_are_used(tmp_path):

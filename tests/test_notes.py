@@ -5,9 +5,9 @@ from urllib.parse import unquote
 
 import pytest
 
-from delivery_desk_app import paths
-from delivery_desk_app.bridge import Bridge
-from delivery_desk_app.notes import mailto_url
+from clearsum import paths
+from clearsum.bridge import Bridge
+from clearsum.notes import mailto_url
 
 pytestmark = pytest.mark.skipif(not (paths.DELIVERY_DESK / "delivery_desk").is_dir(),
                                 reason="delivery-desk must sit next to the app")

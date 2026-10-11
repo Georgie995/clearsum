@@ -21,10 +21,10 @@ def main():
         runpy.run_module(module, run_name="__main__", alter_sys=True)
         return
     if len(sys.argv) == 3 and sys.argv[1] == "--self-test":
-        from delivery_desk_app.selftest import run
+        from clearsum.selftest import run
         run(sys.argv[2])
         return
-    from delivery_desk_app.app import main as open_app
+    from clearsum.app import main as open_app
     open_app()
 
 

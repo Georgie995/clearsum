@@ -3,7 +3,7 @@
 import json
 import re
 
-from delivery_desk_app.app import _on_drop
+from clearsum.app import _on_drop
 
 
 class FakeWindow:
