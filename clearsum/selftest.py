@@ -1,4 +1,4 @@
-"""A self-test for the packaged app: `Delivery Desk.exe --self-test result.json`.
+"""A self-test for the packaged app: `ClearSum.exe --self-test result.json`.
 
 Opens the window for a few seconds and checks the page and fonts, runs a real check of a tiny
 made-up delivery (through "tool mode"), and checks Windows Credential Manager is reachable,
@@ -35,7 +35,7 @@ class _MemoryKeyring:
 
 
 def run(out):
-    work = Path(tempfile.mkdtemp(prefix="delivery-desk-selftest-"))
+    work = Path(tempfile.mkdtemp(prefix="clearsum-selftest-"))
     tree = work / "show-a-ep01"
     files = {"ShowA/clip_0001.mov": b"frames one", "ShowA/clip_0002.mov": b"frames two"}
     for rel, data in files.items():

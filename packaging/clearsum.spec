@@ -1,6 +1,6 @@
 # PyInstaller build recipe for the double-click Windows app.
-#   .venv\Scripts\python -m PyInstaller packaging\delivery-desk.spec --noconfirm
-# Output: dist\Delivery Desk\Delivery Desk.exe (a folder app: start-up is quicker than one big .exe).
+#   .venv\Scripts\python -m PyInstaller packaging\clearsum.spec --noconfirm   (or simply packaging\build.py)
+# Output: dist\ClearSum\ClearSum.exe (a folder app: start-up is quicker than one big .exe).
 
 import sys
 from pathlib import Path
@@ -37,6 +37,6 @@ a = Analysis(
     noarchive=False,
 )
 pyz = PYZ(a.pure)
-exe = EXE(pyz, a.scripts, [], exclude_binaries=True, name="Delivery Desk", console=False,
+exe = EXE(pyz, a.scripts, [], exclude_binaries=True, name="ClearSum", console=False,
           upx=False)                     # UPX compression often upsets antivirus tools; left off
-coll = COLLECT(exe, a.binaries, a.datas, name="Delivery Desk", upx=False)
+coll = COLLECT(exe, a.binaries, a.datas, name="ClearSum", upx=False)

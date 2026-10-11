@@ -70,7 +70,7 @@ class Bridge:
         settings = _engine_settings(values)
         secrets = self._secrets.for_run()
         # The progress file lives in the system's temporary folder: never inside the delivery.
-        progress = Path(tempfile.gettempdir()) / f"delivery-desk-progress-{uuid.uuid4().hex}.json"
+        progress = Path(tempfile.gettempdir()) / f"clearsum-progress-{uuid.uuid4().hex}.json"
         args = ["--manifest", str(manifest), "--progress-file", str(progress)]
         Path(settings["reports_dir"]).mkdir(parents=True, exist_ok=True)
 
@@ -150,7 +150,7 @@ class Bridge:
         return {"ok": True}
 
     def open_email(self, report_id):
-        """A new draft in the default mail app. Delivery Desk never sends anything itself."""
+        """A new draft in the default mail app. ClearSum never sends anything itself."""
         folder = self._note_folder(report_id)
         text = notes.latest_email(folder) if folder else None
         if text is None:

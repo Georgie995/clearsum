@@ -16,7 +16,7 @@ from clearsum import paths
 
 ROOT = Path(__file__).resolve().parents[1]
 LAUNCHER = ROOT / "packaging" / "launcher.py"
-BUILT = ROOT / "dist" / "Delivery Desk" / "Delivery Desk.exe"
+BUILT = ROOT / "dist" / "ClearSum" / "ClearSum.exe"
 sys.path.insert(0, str(ROOT / "packaging"))
 
 from make_notices import notices_text, runtime_distributions  # noqa: E402

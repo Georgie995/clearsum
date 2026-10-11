@@ -1,6 +1,6 @@
-# Delivery Desk (app): design
+# ClearSum (formerly "Delivery Desk"): design
 
-Status: **Approved by Georgi on 2026-10-11.**
+Status: **Approved by Georgi on 2026-10-11.** Renamed from "Delivery Desk" to **ClearSum** before publishing (see DECISIONS).
 
 ## 1. The problem
 

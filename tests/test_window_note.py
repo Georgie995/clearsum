@@ -53,7 +53,7 @@ def test_my_words_and_my_rewording_go_into_the_email_unchanged(shown):
 
 def test_an_answer_that_looks_like_code_is_just_text_in_the_email(shown):
     assert "<img src=x onerror=" in shown["parts"][3]
-    assert shown["images_in_email"] == 0 and shown["title_after_email"] == "Delivery Desk"
+    assert shown["images_in_email"] == 0 and shown["title_after_email"] == "ClearSum"
 
 
 def test_copy_and_open_in_mail_app_use_the_email_and_never_send_it(shown):

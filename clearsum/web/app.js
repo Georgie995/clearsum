@@ -1,4 +1,4 @@
-// Delivery Desk: the page's behaviour. It shows things and asks the bridge (Python) to do things.
+// ClearSum: the page's behaviour. It shows things and asks the bridge (Python) to do things.
 // Rule: anything that came from a delivery or from the computer goes into the page with
 // textContent, never as HTML, so a file name that looks like code is shown, never run.
 'use strict';
@@ -578,7 +578,7 @@
     byId('advancedView').hidden = !advanced;
     byId('modeStandard').setAttribute('aria-pressed', String(!advanced));
     byId('modeAdvanced').setAttribute('aria-pressed', String(advanced));
-    byId('modeHint').textContent = advanced ? 'Where the connected tools live on this computer.' : 'Which tools Delivery Desk works with.';
+    byId('modeHint').textContent = advanced ? 'Where the connected tools live on this computer.' : 'Which tools ClearSum works with.';
   }
 
   async function saveSettings() {

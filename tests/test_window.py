@@ -30,7 +30,7 @@ def test_the_start_screen_opens_with_the_check_button_waiting(shown):
 def test_a_file_name_that_looks_like_code_is_shown_as_text_and_does_nothing(shown):
     assert shown["folder_name_shown"].startswith("<img src=x onerror=")
     assert shown["images_in_folder_card"] == 0
-    assert shown["title_after_hostile"] == "Delivery Desk"
+    assert shown["title_after_hostile"] == "ClearSum"
 
 
 def test_the_cards_show_counts_and_plain_errors_and_the_button_wakes_up(shown):

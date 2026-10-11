@@ -1,4 +1,4 @@
-"""Opens the Delivery Desk window: the pages in `web/`, the bridge, and drag-and-drop.
+"""Opens the ClearSum window: the pages in `web/`, the bridge, and drag-and-drop.
 
 Drops are handled here because only Python learns a dropped item's real location
 (pywebview adds it to the drop event); the page then just shows the result.
@@ -16,7 +16,7 @@ WEB = Path(__file__).parent / "web"
 
 
 def create_window(bridge):
-    window = webview.create_window("Delivery Desk", url=str(WEB / "index.html"), js_api=bridge,
+    window = webview.create_window("ClearSum", url=str(WEB / "index.html"), js_api=bridge,
                                    width=1280, height=880, min_size=(960, 640),
                                    background_color="#FBFAF7", text_select=True)
     bridge._choose = lambda kind: _pick(window, kind)

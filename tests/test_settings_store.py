@@ -10,7 +10,7 @@ from clearsum.settings_store import SettingsError
 
 def test_with_no_settings_file_the_defaults_are_used(tmp_path):
     values = store.load(tmp_path / "settings.json")
-    assert values["reports_dir"].endswith("Delivery Desk Reports")
+    assert values["reports_dir"].endswith("ClearSum Reports")
     assert all(values[k] is None for k in ("ops_hub_path", "ops_hub_config", "ai_triage_path", "ai_triage_python"))
 
 
@@ -72,3 +72,7 @@ def test_a_damaged_settings_file_is_reported_not_silently_replaced(tmp_path):
     with pytest.raises(SettingsError, match="can't be read"):
         store.load(path)
     assert path.read_text(encoding="utf-8") == "{ not json"
+
+
+def test_settings_live_in_the_apps_own_folder_named_after_it():
+    assert store.default_settings_file().parent.name == "ClearSum"

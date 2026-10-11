@@ -1,10 +1,12 @@
-# Delivery Desk
+# ClearSum
 
 A calm, drag-and-drop Windows app for checking media deliveries.
 - **Add a delivery folder and its checksum manifest.** You get a plain answer: did every file arrive intact, and if not, which files and why.
 - **When there are problems,** a short incident note turns your answers into a ready-to-send email for your manager.
 
-It's for anyone who needs delivery checks but isn't comfortable with the command line.
+It's for anyone who needs delivery checks but isn't comfortable with the command line. The name is a play on *checksum*: the app makes checksum results clear.
+
+ClearSum is the desktop version of [delivery-desk](https://github.com/Georgie995/delivery-desk) and runs the same tested engine.
 
 ![Check a delivery](docs/screenshots/1-start.png)
 
@@ -37,8 +39,8 @@ It's for anyone who needs delivery checks but isn't comfortable with the command
 
 ## Getting it (Windows)
 
-1. Download `Delivery-Desk-0.1.0-windows.zip` from this repository's **Releases**, and unzip it anywhere.
-2. Double-click **`Delivery Desk.exe`** in the unzipped folder. Nothing else needs installing.
+1. Download `ClearSum-0.1.0-windows.zip` from this repository's **Releases**, and unzip it anywhere.
+2. Double-click **`ClearSum.exe`** in the unzipped folder. Nothing else needs installing.
 
 **"Windows protected your PC"**: this blue warning appears the first time, because the app isn't digitally signed (a signing certificate is a paid service). Choose **More info → Run anyway**. If you'd rather not, run it from source instead (below).
 
@@ -71,7 +73,7 @@ ENGINE    my earlier tools, unchanged in what they decide:
 
 - [delivery-desk](https://github.com/Georgie995/delivery-desk) is the command-line version of the same flow.
 - [manifest-doctor](https://github.com/Georgie995/manifest-doctor) does the checking. It gained an opt-in progress file for this app.
-- **The packaged app carries its engine inside it.** When it needs a tool, it starts a copy of itself in "tool mode" (`Delivery Desk.exe -m manifest_doctor …`), so no separate Python is needed. Only its own two tools can be started this way.
+- **The packaged app carries its engine inside it.** When it needs a tool, it starts a copy of itself in "tool mode" (`ClearSum.exe -m manifest_doctor …`), so no separate Python is needed. Only its own two tools can be started this way.
 
 ### Running from source, testing and building (for developers)
 
@@ -100,7 +102,7 @@ ENGINE    my earlier tools, unchanged in what they decide:
 ## Why not just…
 
 - **…use delivery-desk on the command line?** If you're comfortable there, do. This app is for colleagues who aren't, and it runs the same tested engine.
-- **…rely on an offload or asset-management tool's own verification?** If your team's tool already checks deliveries against the manifests that come with them and explains failures, use it. Delivery Desk is for the moment a delivery arrives with its own manifest. It works out *why* files don't match, and helps you write that up for your manager.
+- **…rely on an offload or asset-management tool's own verification?** If your team's tool already checks deliveries against the manifests that come with them and explains failures, use it. ClearSum is for the moment a delivery arrives with its own manifest. It works out *why* files don't match, and helps you write that up for your manager.
 
 ## Documentation
 

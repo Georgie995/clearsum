@@ -1,7 +1,7 @@
 """Where the engine and the checker live.
 
 While the app is being built, they are the sibling project folders next to this one. In the
-packaged app they travel inside it (packaging/delivery-desk.spec copies them to `engine/`).
+packaged app they travel inside it (packaging/clearsum.spec copies them to `engine/`).
 This is the one place that knows the difference.
 """
 

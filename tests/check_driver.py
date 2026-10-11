@@ -57,7 +57,7 @@ def drive(window, bridge, root, out):
     js = window.evaluate_js
     r = {}
     temp = Path(tempfile.gettempdir())                     # where progress files live during a check
-    progress_before = set(temp.glob("delivery-desk-progress-*"))
+    progress_before = set(temp.glob("clearsum-progress-*"))
     time.sleep(2.5)
 
     run_check(window, bridge, root / "show-a-ep01", root / "set1.md5")
@@ -119,7 +119,7 @@ def drive(window, bridge, root, out):
     r["reopened_note_button"] = js("document.getElementById('startNote').textContent")
     r["reopened_details_hidden"] = js("document.getElementById('rsDetails').hidden")
     time.sleep(1)
-    r["leftover_progress_files"] = sorted(p.name for p in set(temp.glob("delivery-desk-progress-*")) - progress_before)
+    r["leftover_progress_files"] = sorted(p.name for p in set(temp.glob("clearsum-progress-*")) - progress_before)
     Path(out).write_text(json.dumps(r, ensure_ascii=False, indent=1), encoding="utf-8")
     window.destroy()
 

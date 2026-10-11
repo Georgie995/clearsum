@@ -4,7 +4,7 @@ They are read only when a tool runs, and handed to that one tool (see delivery-d
 Nothing here ever returns a secret's value to the pages: only whether it is saved.
 """
 
-SERVICE = "Delivery Desk"
+SERVICE = "ClearSum"
 # The app's name for each secret, and the name the tool that needs it expects.
 NAMES = {"webhook_secret": "OPS_HUB_WEBHOOK_SECRET", "ai_key": "ANTHROPIC_API_KEY"}
 

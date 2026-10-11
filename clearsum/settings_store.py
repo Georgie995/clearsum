@@ -1,4 +1,4 @@
-"""Delivery Desk's own settings: where things live on this computer.
+"""ClearSum's own settings: where things live on this computer.
 
 Never secrets: those are kept in Windows Credential Manager (secret_store.py). Unknown fields are
 refused, so a secret can't end up in this file by accident.
@@ -20,11 +20,11 @@ class SettingsError(Exception):
 
 def default_settings_file():
     base = os.environ.get("APPDATA") or str(Path.home())
-    return Path(base) / "Delivery Desk" / "settings.json"
+    return Path(base) / "ClearSum" / "settings.json"
 
 
 def default_reports_dir():
-    return str(Path.home() / "Documents" / "Delivery Desk Reports")
+    return str(Path.home() / "Documents" / "ClearSum Reports")
 
 
 def load(path):

@@ -43,7 +43,7 @@ class BITMAPINFOHEADER(ctypes.Structure):
 
 def capture(path):
     user32, gdi32 = ctypes.windll.user32, ctypes.windll.gdi32
-    hwnd = user32.FindWindowW(None, "Delivery Desk")
+    hwnd = user32.FindWindowW(None, "ClearSum")
     rect = wintypes.RECT()
     user32.GetClientRect(hwnd, ctypes.byref(rect))
     width, height = rect.right, rect.bottom

@@ -259,3 +259,31 @@ Each entry records the decision, the alternatives considered and why this one wa
   - **A test fails if any bundled library is missing, or has only a licence *name* rather than its text.**
 - **Found:** `proxy_tools` ships no licence file. PyPI says "MIT", and its source repository's licence file is BSD-style with copyright lines, so that file is reproduced exactly.
 - **PyInstaller's own licence:** GPL with an exception that explicitly allows packaging programs under any licence.
+
+## 2026-10-11: Renamed from "Delivery Desk" to ClearSum, before publishing
+
+- **Why:** Georgi wanted a better, more distinctive name than one so close to the engine's (delivery-desk). ClearSum is his idea: a play on *checksum*, because the app makes checksum results clear. It also reads as "a clear sum", a plain answer, which fits the tagline "Delivery checks, made plain".
+- **Researched first:** web, GitHub and domain checks, on 2026-10-11 (not a legal trademark search).
+  - **No software, company or product called ClearSum.** The nearest names are a software agency called "ClearSummit" and a company called "Clear Software", both different names in different fields.
+  - **`clearsum.app` isn't registered.**
+  - **GitHub:** only 8 tiny, unrelated projects use the name.
+- **Considered and set aside:**
+  - **Quayside:** unused, and Claude's suggestion.
+  - **Tallyclerk:** close to the large "Tally" accounting brand.
+  - **Landed:** a very common word.
+  - **Harbourmaster:** HarbaMaster marina software, and the Harbormaster developer tool.
+  - **Dockcheck:** a popular Docker tool.
+  - **Manifesto:** `manifesto.app` is a live product, and there are about 3,900 GitHub projects with the name.
+- **What changed:**
+  - the window title and sidebar;
+  - the code package (`clearsum`, so the app runs with `python -m clearsum`);
+  - the program, `ClearSum.exe`, and the download, `ClearSum-<version>-windows.zip`;
+  - the build recipe (`packaging/clearsum.spec`);
+  - the settings folder (`%APPDATA%\ClearSum`);
+  - the name in Windows Credential Manager ("ClearSum");
+  - the temporary file names;
+  - the README and walkthrough.
+- **What stayed:**
+  - **the engine,** delivery-desk;
+  - **the local project folder name,** `delivery-desk-app`, because its Python environment has that path built in. The same arrangement as manifest-doctor's local `delivery-verify` folder. The public repository is `clearsum`.
+- **Tested first:** the tests were changed to expect "ClearSum" (window title, Credential Manager name, settings folder, `ClearSum.exe`) and failed until the app was changed. 112 tests now pass, and a fresh `ClearSum.exe` passed its self-test.

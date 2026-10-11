@@ -42,7 +42,7 @@ def test_a_delivery_with_a_file_listed_twice_shows_problems_in_plain_words(shown
 def test_a_file_name_that_looks_like_code_is_just_text_on_the_results_screen(shown):
     assert len(shown["hostile_row_text"]) == 1 and shown["hostile_row_text"][0].startswith("ShowA/<img src=x")
     assert shown["images_in_results"] == 0
-    assert shown["title_after_results"] == "Delivery Desk"
+    assert shown["title_after_results"] == "ClearSum"
 
 
 def test_the_problems_screen_offers_the_note_and_shows_what_the_tools_said(shown):
@@ -89,7 +89,7 @@ def test_the_recent_list_shows_the_latest_checks(shown):
 def test_a_delivery_name_that_looks_like_code_is_just_text_in_the_lists(shown):
     assert shown["earlier_rows"][2][1].startswith("<img src=x onerror=")
     assert shown["images_in_earlier_or_recent"] == 0
-    assert shown["title_after_earlier"] == "Delivery Desk"
+    assert shown["title_after_earlier"] == "ClearSum"
 
 
 def test_searching_and_reopening_an_earlier_check(shown):

@@ -33,3 +33,7 @@ def test_removing_works_and_removing_twice_is_harmless(secrets):
 def test_empty_values_and_unknown_names_are_refused(secrets, name, value):
     with pytest.raises(SecretError):
         secrets.save(name, value)
+
+
+def test_secrets_are_kept_under_the_apps_name_in_credential_manager():
+    assert SERVICE == "ClearSum"

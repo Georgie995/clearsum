@@ -15,7 +15,7 @@ A plain-English explanation of each part, written for someone with no technical 
 
 ## Module 2: the app's skeleton
 
-**In one sentence:** the Delivery Desk window opens, you can add a delivery folder and its manifest by dragging them in or choosing them, and Settings remembers where things are and keeps passwords in Windows' own password safe.
+**In one sentence:** the ClearSum window opens, you can add a delivery folder and its manifest by dragging them in or choosing them, and Settings remembers where things are and keeps passwords in Windows' own password safe.
 
 **Like this:** think of a shop.
 - **The shop front** is the window: your Paper design, with the sidebar, the two big cards and the Settings screen.
