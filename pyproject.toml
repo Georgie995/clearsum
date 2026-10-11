@@ -1,0 +1,18 @@
+[project]
+name = "delivery-desk-app"
+version = "0.1.0"
+description = "Delivery Desk: a calm desktop app for checking media deliveries and writing up problems."
+requires-python = ">=3.11"
+license = "MIT"
+authors = [{ name = "Georgi Stoyanov" }]
+dependencies = [
+    "pywebview==6.2.1",   # shows the app's pages in a native window (BSD-3-Clause)
+    "keyring==25.7.0",    # Windows Credential Manager for secrets (MIT)
+]
+
+[project.optional-dependencies]
+dev = ["pytest"]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]

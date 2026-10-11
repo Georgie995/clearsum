@@ -1,0 +1,290 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<!-- Only the app's own files may run or style this page: a file name that looks like code is never obeyed. -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; font-src 'self'; img-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
+<title>Delivery Desk</title>
+<link rel="stylesheet" href="app.css">
+<script src="app.js" defer></script>
+</head>
+<body>
+<div class="shell">
+
+<nav class="sidebar" aria-label="Main">
+  <div class="brand">
+    <div class="brand-mark">
+      <svg aria-hidden="true" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 13h4l2 3h4l2-3h4"></path><path d="M4 13 6.5 6h11L20 13v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1z"></path></svg>
+    </div>
+    <div class="brand-text">
+      <span class="brand-name">Delivery Desk</span>
+      <span class="brand-tag">Delivery checks, made plain</span>
+    </div>
+  </div>
+
+  <div class="nav-links">
+    <button type="button" class="nav-link" data-screen="start" aria-current="page">
+      <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 8v8M8 12h8"></path></svg>
+      New check
+    </button>
+    <button type="button" class="nav-link" data-screen="earlier">
+      <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 7.5V12l3 2"></path></svg>
+      Earlier checks
+    </button>
+    <button type="button" class="nav-link" data-screen="settings">
+      <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"></path><circle cx="16" cy="7" r="2"></circle><circle cx="10" cy="17" r="2"></circle></svg>
+      Settings
+    </button>
+  </div>
+
+  <div class="recent">
+    <span class="eyebrow">Recent</span>
+    <p class="recent-empty">Your checks will appear here.</p>
+  </div>
+
+  <div class="sidebar-foot">
+    <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"></rect><path d="M8 11V8a4 4 0 0 1 8 0v3"></path></svg>
+    <span>Checks only read your files. Nothing in a delivery is ever changed.</span>
+  </div>
+</nav>
+
+<main class="main">
+
+  <!-- 1 · Start -->
+  <section class="screen" id="screen-start" aria-labelledby="start-title">
+    <div class="banner" aria-hidden="true">
+      <svg width="100%" height="150" viewBox="0 0 1040 150" preserveAspectRatio="none" fill="none" stroke="#D8D1C4" stroke-width="1.2">
+        <path vector-effect="non-scaling-stroke" d="M0 62 C 150 6, 330 128, 520 46 S 860 -8, 1040 52"></path>
+        <path vector-effect="non-scaling-stroke" d="M0 80 C 160 24, 340 142, 540 64 S 880 12, 1040 72"></path>
+        <path vector-effect="non-scaling-stroke" d="M0 98 C 180 40, 360 152, 560 82 S 900 30, 1040 92"></path>
+        <path vector-effect="non-scaling-stroke" d="M0 116 C 200 58, 380 164, 580 100 S 920 50, 1040 110"></path>
+        <path vector-effect="non-scaling-stroke" d="M0 134 C 220 76, 400 176, 600 118 S 940 68, 1040 128"></path>
+      </svg>
+    </div>
+    <div class="page page-start">
+      <div class="hero-mark">
+        <svg aria-hidden="true" width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 13h4l2 3h4l2-3h4"></path><path d="M4 13 6.5 6h11L20 13v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1z"></path></svg>
+      </div>
+      <header class="page-head">
+        <h1 id="start-title">Check a delivery</h1>
+        <p class="lead">Add the delivery folder and its checksum manifest. You'll get a plain answer: did every file arrive intact, and if not, which files and why.</p>
+      </header>
+
+      <div class="cards">
+        <div class="card drop" id="folderCard">
+          <div class="card-empty" id="folderEmpty">
+            <div class="tile">
+              <svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7.5A1.5 1.5 0 0 1 4.5 6h4l2 2h9A1.5 1.5 0 0 1 21 9.5v8a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 17.5z"></path></svg>
+            </div>
+            <div class="card-text">
+              <h2>Delivery folder</h2>
+              <p>Drag the delivery folder here, or choose it from your computer.</p>
+            </div>
+            <button type="button" class="button" id="chooseFolder">Choose folder…</button>
+          </div>
+          <div class="card-chosen" id="folderChosen" hidden>
+            <div class="card-top">
+              <div class="tile tile-ok">
+                <svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7.5A1.5 1.5 0 0 1 4.5 6h4l2 2h9A1.5 1.5 0 0 1 21 9.5v8a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 17.5z"></path></svg>
+              </div>
+              <span class="pill pill-ok">Added</span>
+            </div>
+            <div class="card-facts">
+              <span class="eyebrow">Delivery folder</span>
+              <span class="mono big" id="folderName"></span>
+              <span class="mono small muted" id="folderPath"></span>
+              <span class="fact" id="folderFiles"></span>
+            </div>
+            <button type="button" class="link-button" id="changeFolder">Choose a different folder</button>
+          </div>
+          <p class="card-error" id="folderError" role="alert"></p>
+        </div>
+
+        <div class="card drop" id="manifestCard">
+          <div class="card-empty" id="manifestEmpty">
+            <div class="tile">
+              <svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h7l4 4v14H7z"></path><path d="M14 3v4h4"></path><path d="M10 12h5M10 15.5h5"></path></svg>
+            </div>
+            <div class="card-text">
+              <h2>Checksum manifest</h2>
+              <p>The list of files and checksums that came with the delivery, such as an .md5 file.</p>
+            </div>
+            <button type="button" class="button" id="chooseManifest">Choose manifest…</button>
+          </div>
+          <div class="card-chosen" id="manifestChosen" hidden>
+            <div class="card-top">
+              <div class="tile tile-ok">
+                <svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h7l4 4v14H7z"></path><path d="M14 3v4h4"></path><path d="M10 12h5M10 15.5h5"></path></svg>
+              </div>
+              <span class="pill pill-ok">Added</span>
+            </div>
+            <div class="card-facts">
+              <span class="eyebrow">Checksum manifest</span>
+              <span class="mono big" id="manifestName"></span>
+              <span class="mono small muted" id="manifestPath"></span>
+              <span class="fact" id="manifestEntries"></span>
+            </div>
+            <button type="button" class="link-button" id="changeManifest">Choose a different manifest</button>
+          </div>
+          <p class="card-error" id="manifestError" role="alert"></p>
+        </div>
+      </div>
+
+      <div class="go-row">
+        <button type="button" class="button primary" id="checkButton" disabled>Check delivery</button>
+        <p class="muted" id="readyHint">Add the delivery folder and its manifest to start.</p>
+      </div>
+
+      <div class="reassure">
+        <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"></rect><path d="M8 11V8a4 4 0 0 1 8 0v3"></path></svg>
+        <span>Checking only reads your files. Nothing is moved, renamed or changed.</span>
+      </div>
+
+      <section class="how" aria-labelledby="how-title">
+        <h2 id="how-title" class="serif">How it works</h2>
+        <div class="steps">
+          <div class="step"><span class="step-num">1</span><h3>Check</h3><p>Every file is compared with its line in the manifest.</p></div>
+          <div class="step"><span class="step-num">2</span><h3>Read the result</h3><p>Problems are explained in plain words, with the files they affect.</p></div>
+          <div class="step"><span class="step-num">3</span><h3>Write it up</h3><p>Answer five short questions and get an email for your manager.</p></div>
+        </div>
+      </section>
+    </div>
+  </section>
+
+  <!-- 8 · Earlier checks (built in module 5) -->
+  <section class="screen" id="screen-earlier" aria-labelledby="earlier-title" hidden>
+    <div class="page">
+      <header class="page-head">
+        <h1 id="earlier-title">Earlier checks</h1>
+        <p class="lead">Every check run on this computer, newest first. This screen arrives later in the build.</p>
+      </header>
+    </div>
+  </section>
+
+  <!-- 7 · Settings -->
+  <section class="screen" id="screen-settings" aria-labelledby="settings-title" hidden>
+    <div class="page page-settings">
+      <header class="settings-head">
+        <div class="page-head">
+          <h1 id="settings-title">Settings</h1>
+          <p class="lead" id="modeHint">Which tools Delivery Desk works with.</p>
+        </div>
+        <div class="segmented" role="group" aria-label="Settings detail">
+          <button type="button" id="modeStandard" aria-pressed="true">Standard</button>
+          <button type="button" id="modeAdvanced" aria-pressed="false">Advanced</button>
+        </div>
+      </header>
+      <p class="banner-warning" id="settingsWarning" role="alert" hidden></p>
+
+      <div id="standardView">
+        <section class="block">
+          <h2 class="serif">Connected tools</h2>
+          <div class="rows">
+            <div class="row">
+              <div class="row-text"><span class="row-title">Checking</span><span class="row-desc">Built in. Compares every file with its manifest and explains what it finds. Always available.</span></div>
+              <span class="pill pill-ok">Ready</span>
+            </div>
+            <div class="row">
+              <div class="row-text"><span class="row-title">Alerts and log <span class="muted normal">(optional)</span></span><span class="row-desc">When set up, delivery-ops-hub sends one alert for each delivery with problems, and logs every check. Without it, checks still run and every report is still saved.</span></div>
+              <span class="pill" id="alertsStatus"></span>
+            </div>
+            <div class="row">
+              <div class="row-text"><span class="row-title">AI summary <span class="muted normal">(optional)</span></span><span class="row-desc">ai-triage writes a checked summary for your note. Without it, the summary is written by code instead. Everything else works the same.</span></div>
+              <span class="pill" id="aiStatus"></span>
+            </div>
+          </div>
+          <p class="muted">Reports are saved in <span class="mono small" id="reportsInUse"></span><span id="reportsInUseWhy"></span></p>
+          <p class="muted">Set up or change the optional tools under Advanced.</p>
+        </section>
+      </div>
+
+      <div id="advancedView" hidden>
+        <section class="block">
+          <h2 class="serif">Reports</h2>
+          <div class="panel">
+            <div class="field" data-field="reports_dir">
+              <label for="f-reports_dir">Reports folder</label>
+              <div class="field-row"><input type="text" id="f-reports_dir" spellcheck="false"><button type="button" class="button small-button" data-browse="reports_dir" data-kind="folder">Browse…</button></div>
+              <span class="help">Every check's report, working note and email are kept here. While alerts are set up, the reports folder in delivery-ops-hub's settings is used instead.</span>
+              <span class="field-error" id="e-reports_dir"></span>
+            </div>
+          </div>
+        </section>
+
+        <section class="block">
+          <h2 class="serif">Alerts and log <span class="aside">(optional)</span></h2>
+          <div class="panel">
+            <div class="field" data-field="ops_hub_path">
+              <label for="f-ops_hub_path">delivery-ops-hub folder</label>
+              <div class="field-row"><input type="text" id="f-ops_hub_path" spellcheck="false" placeholder="C:/path/to/delivery-ops-hub"><button type="button" class="button small-button" data-browse="ops_hub_path" data-kind="folder">Browse…</button></div>
+              <span class="field-error" id="e-ops_hub_path"></span>
+            </div>
+            <div class="field" data-field="ops_hub_config">
+              <label for="f-ops_hub_config">delivery-ops-hub settings file</label>
+              <div class="field-row"><input type="text" id="f-ops_hub_config" spellcheck="false" placeholder="C:/path/to/delivery-ops-hub/ops-hub.toml"><button type="button" class="button small-button" data-browse="ops_hub_config" data-kind="file">Browse…</button></div>
+              <span class="help">Its reports folder and alert settings are reused as they are.</span>
+              <span class="field-error" id="e-ops_hub_config"></span>
+            </div>
+            <div class="field" data-secret="webhook_secret">
+              <span class="label">Webhook secret</span>
+              <div class="secret-saved" id="webhook_secret-saved" hidden>
+                <span class="pill pill-ok">Saved in Windows Credential Manager</span>
+                <button type="button" class="button small-button" data-replace="webhook_secret">Replace</button>
+                <button type="button" class="link-button danger" data-remove="webhook_secret">Remove</button>
+              </div>
+              <div class="secret-edit" id="webhook_secret-edit">
+                <span class="help">Paste the same secret that's stored in n8n's Header Auth credential.</span>
+                <div class="field-row"><input type="password" id="s-webhook_secret" autocomplete="off" placeholder="Paste the webhook secret" aria-label="Webhook secret"><button type="button" class="button small-button" data-save-secret="webhook_secret">Save secret</button></div>
+              </div>
+              <span class="field-error" id="e-webhook_secret"></span>
+            </div>
+          </div>
+        </section>
+
+        <section class="block">
+          <h2 class="serif">AI summary <span class="aside">(optional)</span></h2>
+          <div class="panel">
+            <div class="field" data-field="ai_triage_path">
+              <label for="f-ai_triage_path">ai-triage folder</label>
+              <div class="field-row"><input type="text" id="f-ai_triage_path" spellcheck="false" placeholder="C:/path/to/ai-triage"><button type="button" class="button small-button" data-browse="ai_triage_path" data-kind="folder">Browse…</button></div>
+              <span class="field-error" id="e-ai_triage_path"></span>
+            </div>
+            <div class="field" data-field="ai_triage_python">
+              <label for="f-ai_triage_python">ai-triage Python</label>
+              <div class="field-row"><input type="text" id="f-ai_triage_python" spellcheck="false" placeholder="C:/path/to/ai-triage/.venv/Scripts/python.exe"><button type="button" class="button small-button" data-browse="ai_triage_python" data-kind="file">Browse…</button></div>
+              <span class="field-error" id="e-ai_triage_python"></span>
+            </div>
+            <div class="field" data-secret="ai_key">
+              <span class="label">AI key</span>
+              <div class="secret-saved" id="ai_key-saved" hidden>
+                <span class="pill pill-ok">Saved in Windows Credential Manager</span>
+                <button type="button" class="button small-button" data-replace="ai_key">Replace</button>
+                <button type="button" class="link-button danger" data-remove="ai_key">Remove</button>
+              </div>
+              <div class="secret-edit" id="ai_key-edit">
+                <span class="help">Used only to write the AI summary. Without it, the summary is written by code.</span>
+                <div class="field-row"><input type="password" id="s-ai_key" autocomplete="off" placeholder="Paste your Anthropic API key" aria-label="AI key"><button type="button" class="button small-button" data-save-secret="ai_key">Save key</button></div>
+              </div>
+              <span class="field-error" id="e-ai_key"></span>
+            </div>
+          </div>
+        </section>
+
+        <div class="reassure">
+          <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"></rect><path d="M8 11V8a4 4 0 0 1 8 0v3"></path></svg>
+          <span><strong>Secrets stay in Windows Credential Manager,</strong> the password store built into Windows. Delivery Desk never writes them into its settings, reports, notes or emails, and never shows a saved secret again.</span>
+        </div>
+
+        <div class="go-row">
+          <button type="button" class="button primary" id="saveSettings">Save settings</button>
+          <span class="saved-note" id="savedNote" role="status"></span>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+</body>
+</html>
