@@ -96,5 +96,111 @@ def test_secret_mistakes_come_back_as_plain_messages(bridge):
 
 def test_the_page_can_only_reach_the_bridges_public_actions():
     public = sorted(name for name in dir(Bridge) if not name.startswith("_"))
-    assert public == ["choose_folder", "choose_manifest", "choose_path", "describe_folder", "describe_manifest",
-                      "get_settings", "remove_secret", "save_secret", "save_settings"]
+    assert public == ["check_status", "choose_folder", "choose_manifest", "choose_path", "describe_folder",
+                      "describe_manifest", "get_result", "get_settings", "remove_secret", "save_secret",
+                      "save_settings", "show_report_folder", "start_check", "stop_check"]
+
+
+# --- Module 3: starting a check, its results, and Show report in folder ---------------------------------
+
+import threading
+from pathlib import Path
+from types import SimpleNamespace
+
+
+class FakeEngine:
+    """Stands in for delivery-desk's engine: records what it was asked, writes a tiny report."""
+    def __init__(self, reports):
+        self.calls = []
+        self.reports = Path(reports)
+
+    def check(self, settings, tree, doctor_args, secrets=None, output=None, stop=None):
+        self.calls.append({"settings": settings, "tree": tree, "args": doctor_args, "secrets": secrets})
+        folder = self.reports / "report-2026-10-11_160742"
+        folder.mkdir(parents=True, exist_ok=True)
+        (folder / "report.json").write_text(json.dumps({
+            "header": {"result": "CLEAN", "tree": str(tree), "run_at": "2026-10-11T16:07:42+01:00",
+                       "counts": {"ERROR": 0, "WARNING": 0, "INFO": 0}, "manifests": [{"path": "set1.md5", "entries": 3}]},
+            "causes": [], "findings": []}), encoding="utf-8")
+        return SimpleNamespace(code=0, result="CLEAN", report_folder=folder, note=None, stopped=False)
+
+
+@pytest.fixture
+def checker(tmp_path, secrets):
+    reports = tmp_path / "reports"
+    engine = FakeEngine(reports)
+    opened = []
+    b = Bridge(settings_file=tmp_path / "app" / "settings.json", secrets=secrets, engine=engine, opener=opened.append)
+    b.save_settings({"reports_dir": str(reports)})
+    b.engine, b.opened, b.reports = engine, opened, reports
+    return b
+
+
+def wait_done(bridge, timeout=5):
+    import time
+    end = time.monotonic() + timeout
+    while bridge.check_status()["state"] in ("running", "idle"):
+        assert time.monotonic() < end
+        time.sleep(0.02)
+    return bridge.check_status()
+
+
+def test_without_alerts_the_check_runs_manifest_doctor_directly_with_a_progress_file(tmp_path, checker):
+    tree, manifest = delivery(tmp_path)
+    assert checker.start_check(str(tree), str(manifest)) == {"ok": True}
+    assert wait_done(checker)["state"] == "finished"
+    [call] = checker.engine.calls
+    assert call["settings"]["ops_hub_path"] is None and call["settings"]["reports_dir"] == str(checker.reports)
+    assert Path(call["settings"]["manifest_doctor_path"]).name == "delivery-verify"
+    args = call["args"]
+    assert args[:2] == ["--manifest", str(manifest)] and args[2] == "--progress-file"
+    assert not Path(args[3]).resolve().is_relative_to(tree.resolve())     # never inside the delivery
+
+
+def test_with_alerts_the_check_goes_through_delivery_ops_hub_with_the_saved_secrets(tmp_path, checker, hub):
+    checker.save_settings({"reports_dir": str(checker.reports), "ops_hub_path": str(hub[0]), "ops_hub_config": str(hub[1])})
+    checker.save_secret("webhook_secret", "hook-123")
+    tree, manifest = delivery(tmp_path)
+    checker.start_check(str(tree), str(manifest))
+    wait_done(checker)
+    [call] = checker.engine.calls
+    assert call["settings"]["ops_hub_path"] == str(hub[0])
+    assert call["settings"]["reports_dir"] == str(tmp_path / "hub-reports")
+    assert call["secrets"] == {"OPS_HUB_WEBHOOK_SECRET": "hook-123"}
+
+
+def test_only_one_check_runs_at_a_time(tmp_path, checker):
+    tree, manifest = delivery(tmp_path)
+    gate = threading.Event()
+    original = checker.engine.check
+    checker.engine.check = lambda *a, **k: (gate.wait(5), original(*a, **k))[1]
+    assert checker.start_check(str(tree), str(manifest))["ok"] is True
+    second = checker.start_check(str(tree), str(manifest))
+    assert second["ok"] is False and "already running" in second["error"]
+    gate.set()
+    wait_done(checker)
+
+
+def test_a_check_wont_start_without_a_real_folder_and_manifest(tmp_path, checker):
+    tree, manifest = delivery(tmp_path)
+    assert "not a folder" in checker.start_check(str(manifest), str(manifest))["error"]
+    assert "not a manifest" in checker.start_check(str(tree), str(tree))["error"]
+
+
+def test_results_are_read_only_from_report_folders_inside_the_reports_folder(tmp_path, checker):
+    tree, manifest = delivery(tmp_path)
+    checker.start_check(str(tree), str(manifest))
+    report_id = wait_done(checker)["outcome"]["report_id"]
+    assert checker.get_result(report_id)["headline"] == "All 3 files match the manifest."
+    for sneaky in ("..", "../app", r"C:\Windows", "report-x/../../app", r"report-x\..\..\app", "", None, 42):
+        assert checker.get_result(sneaky)["ok"] is False
+
+
+def test_show_report_in_folder_opens_only_a_real_report_folder(tmp_path, checker):
+    tree, manifest = delivery(tmp_path)
+    checker.start_check(str(tree), str(manifest))
+    report_id = wait_done(checker)["outcome"]["report_id"]
+    assert checker.show_report_folder(report_id) == {"ok": True}
+    assert checker.opened == [checker.reports / report_id]
+    assert checker.show_report_folder(r"..\..\Windows")["ok"] is False
+    assert len(checker.opened) == 1

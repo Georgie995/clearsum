@@ -72,3 +72,36 @@ Each entry records the decision, the alternatives considered and why this one wa
   - drops, without a window;
   - **an automatic window test:** it opens the real app for a few seconds, drives it, records what it shows, and closes it.
 - **The window test was written after the pages, not before,** so its protections were proven by breaking them instead. 9 protections were broken on purpose, and every one was caught.
+
+## 2026-10-11: Checks run in the background; the screen asks how they're going
+
+- **Decision:**
+  - `start_check` hands the work to delivery-desk's engine on a background thread, so the window never freezes.
+  - The page asks `check_status` a few times a second.
+  - Progress comes from manifest-doctor's progress file, which sits in the system's temporary folder, never inside the delivery, and is tidied away afterwards.
+  - **Only one check runs at a time.**
+- **Time left:** worked out from how fast data has been read so far. It's shown only once reading has properly begun, so it's never a guess.
+- **Stop:** passed straight to the engine, which ends the checking tool and anything it started.
+- **A problem starting a check** (for example a settings mistake) is shown in plain words, and is never a crash.
+- **Found while testing:** on Windows, a file can't be deleted at the instant another part of the app is reading it. Tidying up the progress file now tries again briefly, rather than letting an error escape. A test forces that moment every time.
+
+## 2026-10-11: The engine's settings depend on whether alerts are set up
+
+- **Alerts set up:** the check goes through delivery-ops-hub, with the webhook secret from Credential Manager. Reports land in delivery-ops-hub's reports folder, under Georgi's rule.
+- **Otherwise:** manifest-doctor runs directly into the app's Reports folder.
+- **Either way:** ai-triage is used if it's set up, with the AI key if one is saved.
+
+## 2026-10-11: Results and "Show report in folder" only ever reach real report folders
+
+- **Decision:** the page asks for a result by report name only, such as `report-2026-10-11_160742`. The name must look exactly like a manifest-doctor report folder, sit directly inside the reports folder in use, and contain a `report.json`.
+- **Why:** a name from the page can never reach anywhere else on the computer. "Show report in folder" opens only a checked report folder in File Explorer, never an arbitrary path, which on Windows could otherwise open a program.
+
+## 2026-10-11: Results in plain words
+
+- **Headlines:**
+  - **Clean:** "All 1,204 files match the manifest."
+  - **Warnings only:** "Every file arrived intact", plus how many warnings.
+  - **Problems:** "N files didn't arrive as expected." This counts *files*, not findings: one file listed twice and mismatched is still one file.
+  - **Only manifest problems:** "The manifest itself has problems."
+- **Friendly titles** for all 20 codes are drafts awaiting Georgi's review. An unknown code is shown as itself.
+- **Limits:** up to 500 findings on screen, with the total shown, and 10 files per probable cause, as in the working note. The full lists are always in the report files.
