@@ -85,7 +85,7 @@ ENGINE    my earlier tools, unchanged in what they decide:
   ```
 - **Run:** `.venv\Scripts\python -m clearsum`, or double-click `run-app.bat`.
 - **Test:** `.venv\Scripts\python -m pytest`.
-  - **110 tests,** including real checks driven through the real window. Window tests open the app for a few seconds.
+  - **113 tests,** including real checks driven through the real window. Window tests open the app for a few seconds.
   - **Skips:** tests that need the sibling repos or a built app are skipped when those are absent.
   - **Proven by breaking things on purpose:** every protection was broken one at a time, and a test failed each time.
 - **Build:** `.venv\Scripts\python packaging\build.py`. It writes the third-party notices, builds with PyInstaller, runs the packaged app's own self-test, and only then zips it.
