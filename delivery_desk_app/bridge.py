@@ -79,11 +79,14 @@ class Bridge:
             return engine.check(settings, folder, args, secrets=secrets, output=output, stop=stop)
 
         self._run = CheckRun(call, progress)
+        self._alerts = bool(settings["ops_hub_path"])
         self._run.start()
         return {"ok": True}
 
     def check_status(self):
-        return self._run.status() if self._run is not None else {"state": "idle"}
+        if self._run is None:
+            return {"state": "idle"}
+        return {**self._run.status(), "alerts": self._alerts}  # the screen words the alert line from this
 
     def stop_check(self):
         if self._run is not None:

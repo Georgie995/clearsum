@@ -204,3 +204,12 @@ def test_show_report_in_folder_opens_only_a_real_report_folder(tmp_path, checker
     assert checker.opened == [checker.reports / report_id]
     assert checker.show_report_folder(r"..\..\Windows")["ok"] is False
     assert len(checker.opened) == 1
+
+
+def test_the_status_says_whether_alerts_were_on_for_this_check(tmp_path, checker, hub):
+    tree, manifest = delivery(tmp_path)
+    checker.start_check(str(tree), str(manifest))
+    assert wait_done(checker)["alerts"] is False
+    checker.save_settings({"reports_dir": str(checker.reports), "ops_hub_path": str(hub[0]), "ops_hub_config": str(hub[1])})
+    checker.start_check(str(tree), str(manifest))
+    assert wait_done(checker)["alerts"] is True

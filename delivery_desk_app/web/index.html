@@ -151,6 +151,149 @@
     </div>
   </section>
 
+  <!-- 2 · Checking -->
+  <section class="screen" id="screen-checking" aria-labelledby="checking-title" hidden>
+    <div class="page page-narrow">
+      <header class="page-head">
+        <span class="eyebrow" id="checkStage">Checking · you can keep working</span>
+        <h1 id="checking-title">Checking <span class="mono h1-mono" id="checkName"></span></h1>
+        <p class="lead">Against <span class="mono" id="checkManifest"></span>.</p>
+      </header>
+      <section class="progress-card" aria-label="Progress">
+        <div class="progress-top">
+          <span class="big-number" id="checkPct">0%</span>
+          <span class="progress-counts" id="checkCounts">Getting ready…</span>
+        </div>
+        <div class="bar" role="progressbar" aria-label="Files checked" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="checkBarBox"><div class="bar-fill" id="checkBar"></div></div>
+        <div class="now-reading">
+          <span class="small muted" id="nowLabel">Reading now</span>
+          <span class="mono" id="nowFile">…</span>
+        </div>
+      </section>
+      <ol class="stages">
+        <li class="stage" id="stage-preparing"><span class="stage-mark">1</span><span class="stage-text"><span class="stage-title">Reading the manifest and the folder</span><span class="stage-detail">Which files should be there, and which are.</span></span></li>
+        <li class="stage" id="stage-hashing"><span class="stage-mark">2</span><span class="stage-text"><span class="stage-title">Reading files and working out checksums</span><span class="stage-detail">Each file is read once, start to finish.</span></span></li>
+        <li class="stage" id="stage-comparing"><span class="stage-mark">3</span><span class="stage-text"><span class="stage-title">Comparing and looking for likely causes</span><span class="stage-detail">Related findings are grouped so you can see what probably happened.</span></span></li>
+      </ol>
+      <div class="go-row">
+        <button type="button" class="button" id="stopButton">Stop checking</button>
+        <span class="muted">Stopping is safe. Nothing has been changed.</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3 · All clear -->
+  <section class="screen" id="screen-allclear" aria-labelledby="allclear-title" hidden>
+    <div class="page">
+      <header class="result-head">
+        <div class="result-icon result-icon-ok">
+          <svg aria-hidden="true" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"></path></svg>
+        </div>
+        <span class="pill pill-ok">CLEAN</span>
+        <h1 id="allclear-title"></h1>
+        <p class="lead">Every file listed in <span class="mono" id="acManifests"></span> is here, and each one matches its checksum. Nothing extra turned up. There's nothing to write up.</p>
+      </header>
+      <dl class="facts">
+        <div><dt>Delivery</dt><dd class="mono small" id="acTree"></dd></div>
+        <div><dt>Manifest</dt><dd class="mono small" id="acManifest"></dd></div>
+        <div><dt>Checked</dt><dd id="acWhen"></dd></div>
+      </dl>
+      <p class="alert-line" id="acAlert" hidden></p>
+      <div class="go-row">
+        <button type="button" class="button primary" data-again>Check another delivery</button>
+        <button type="button" class="button" data-show-folder>
+          <svg aria-hidden="true" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7.5A1.5 1.5 0 0 1 4.5 6h4l2 2h9A1.5 1.5 0 0 1 21 9.5v8a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 17.5z"></path></svg>
+          Show report in folder
+        </button>
+      </div>
+      <section class="block-top">
+        <h2 class="serif">What was checked</h2>
+        <ul class="checked-list" id="acChecked"></ul>
+      </section>
+    </div>
+  </section>
+
+  <!-- 4 · Problems found (and passed with warnings) -->
+  <section class="screen" id="screen-results" aria-labelledby="results-title" hidden>
+    <div class="page page-wide">
+      <header class="result-head">
+        <span class="pill" id="rsPill"></span>
+        <h1 id="results-title"></h1>
+        <p class="lead" id="rsSubline"></p>
+        <p class="lead">Checked <span class="mono" id="rsTree"></span> against <span class="mono" id="rsManifests"></span> on <span id="rsWhen"></span>.</p>
+      </header>
+      <p class="alert-line" id="rsAlert" hidden></p>
+      <div class="go-row">
+        <button type="button" class="button" data-show-folder>
+          <svg aria-hidden="true" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7.5A1.5 1.5 0 0 1 4.5 6h4l2 2h9A1.5 1.5 0 0 1 21 9.5v8a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 17.5z"></path></svg>
+          Show report in folder
+        </button>
+        <button type="button" class="button primary" id="startNote" hidden>Start incident note</button>
+        <button type="button" class="link-button" data-again>Check another delivery</button>
+      </div>
+      <div class="count-cards">
+        <div class="count-card count-error"><span class="count-label">Errors</span><span class="count-number" id="rsErrors">0</span><span class="count-hint">Need looking at</span></div>
+        <div class="count-card count-warning"><span class="count-label">Warnings</span><span class="count-number" id="rsWarnings">0</span><span class="count-hint">Worth a look</span></div>
+        <div class="count-card count-info"><span class="count-label">Info</span><span class="count-number" id="rsInfo">0</span><span class="count-hint">For your information</span></div>
+      </div>
+      <section class="block-top" id="rsCausesBlock">
+        <h2 class="serif">What probably happened</h2>
+        <p class="muted">Likely explanations worked out from the findings. They're hints, not verdicts, so check them before you act.</p>
+        <div class="causes" id="rsCauses"></div>
+      </section>
+      <section class="block-top">
+        <div class="table-head">
+          <h2 class="serif">All findings</h2>
+          <div class="chips" role="group" aria-label="Show findings">
+            <button type="button" class="chip" data-filter="ALL" aria-pressed="true"></button>
+            <button type="button" class="chip" data-filter="ERROR" aria-pressed="false"></button>
+            <button type="button" class="chip" data-filter="WARNING" aria-pressed="false"></button>
+            <button type="button" class="chip" data-filter="INFO" aria-pressed="false"></button>
+          </div>
+        </div>
+        <div class="table-box">
+          <table class="findings">
+            <thead><tr><th scope="col">Severity</th><th scope="col">What we found</th><th scope="col">File</th><th scope="col">Code</th></tr></thead>
+            <tbody id="rsRows"></tbody>
+          </table>
+          <p class="table-empty" id="rsEmpty" hidden>Nothing in this group.</p>
+        </div>
+        <p class="small muted" id="rsCap"></p>
+        <p class="small muted">File names are shown exactly as found on disk.</p>
+      </section>
+      <details class="details" id="rsDetails">
+        <summary>Show what the tools said</summary>
+        <pre class="tool-output" id="rsOutput"></pre>
+      </details>
+    </div>
+  </section>
+
+  <!-- The check couldn't run (not in the prototype; same Paper style) -->
+  <section class="screen" id="screen-notchecked" aria-labelledby="notchecked-title" hidden>
+    <div class="page page-narrow">
+      <header class="result-head">
+        <div class="result-icon result-icon-warn">
+          <svg aria-hidden="true" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8v5M12 16.5v.5"></path><circle cx="12" cy="12" r="9"></circle></svg>
+        </div>
+        <span class="pill pill-warn">NOT CHECKED</span>
+        <h1 id="notchecked-title">The check couldn't run</h1>
+        <p class="lead" id="ncReason"></p>
+      </header>
+      <div class="reassure">
+        <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"></rect><path d="M8 11V8a4 4 0 0 1 8 0v3"></path></svg>
+        <span>Nothing was verified, and nothing in the delivery was changed.</span>
+      </div>
+      <section class="block-top" id="ncSaidBlock">
+        <h2 class="serif">What the tools said</h2>
+        <pre class="tool-output" id="ncOutput"></pre>
+      </section>
+      <div class="go-row">
+        <button type="button" class="button primary" id="ncBack">Back to the check</button>
+        <button type="button" class="link-button" id="ncSettings">Open Settings</button>
+      </div>
+    </div>
+  </section>
+
   <!-- 8 · Earlier checks (built in module 5) -->
   <section class="screen" id="screen-earlier" aria-labelledby="earlier-title" hidden>
     <div class="page">

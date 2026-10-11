@@ -105,3 +105,44 @@ Each entry records the decision, the alternatives considered and why this one wa
   - **Only manifest problems:** "The manifest itself has problems."
 - **Friendly titles** for all 20 codes are drafts awaiting Georgi's review. An unknown code is shown as itself.
 - **Limits:** up to 500 findings on screen, with the total shown, and 10 files per probable cause, as in the working note. The full lists are always in the report files.
+
+## 2026-10-11: The Checking screen's three steps follow what manifest-doctor really does
+
+- **Decision:**
+  1. "Reading the manifest and the folder" (its "preparing" stage).
+  2. "Reading files and working out checksums" ("hashing").
+  3. "Comparing and looking for likely causes" (after the last file is read).
+- **Why:** the prototype's three steps were in a different order from the real work. The screen should never describe something that isn't happening.
+- **The percentage follows data read,** not files counted, because one large file can take as long as thousands of small ones.
+
+## 2026-10-11: Passed-with-warnings uses the Problems layout; All clear is only for CLEAN
+
+- **Why:** warnings have findings worth showing (the table, likely causes), but no working note, because notes are for PROBLEMS FOUND only (Georgi's rule). The pill says "PASSED WITH WARNINGS" in amber, and "Start incident note" is hidden.
+
+## 2026-10-11: A "The check couldn't run" screen (not in the prototype)
+
+- **When:** the checking tool stopped before verifying anything, for example with an empty manifest, or when delivery-ops-hub couldn't run.
+- **Shows:**
+  - a plain reason;
+  - "Nothing was verified, and nothing in the delivery was changed";
+  - the tools' own last messages, word for word;
+  - "Back to the check" (the selections are kept) and "Open Settings".
+- **Same Paper style as the rest of the app.** For Georgi to review in the app.
+
+## 2026-10-11: The alert line is worded from what delivery-ops-hub actually said
+
+- **Decision:** shown only when alerts are set up. "NOT DELIVERED" in delivery-ops-hub's messages becomes "Not delivered to n8n. It is waiting in delivery-ops-hub's outbox…", and "ALERT FAILED" becomes "Logged, but the alert itself failed. Tell the team directly." Otherwise it says the check was logged, and that alerts go out for deliveries with problems.
+- **Why:** the app shouldn't claim an alert was sent when it wasn't. The tools' full messages are always available under "Show what the tools said".
+
+## 2026-10-11: Real checks in the real window, as a test
+
+- **Decision:** `test_window_check.py` opens the app and runs real checks through delivery-desk and manifest-doctor on three synthetic deliveries:
+  - one with a file listed twice, **plus a manifest line naming a file `<img … onerror=…>`**;
+  - one clean;
+  - one with an empty manifest.
+- **Why the odd file name:** Windows doesn't allow such names on disk, but a manifest can list any name, and a delivery from a Linux machine could hold one. On screen it must be plain text that does nothing.
+- **Two weaknesses found in the test itself while proving it, and fixed:**
+  - its "no leftover progress files" check was looking in the wrong folder, so it could never fail;
+  - it had no hostile name on the results screen.
+- **6 protections were broken on purpose, and every one was caught.**
+- **Not covered in the window:** pressing Stop mid-check. A real check of a tiny delivery is over too fast to stop. Stop is covered by the engine's tests (a program and its child are both ended) and the background-check tests.
