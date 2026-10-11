@@ -5,10 +5,13 @@ always shows it as text.
 """
 
 import json
+import re
 from datetime import datetime
 from pathlib import Path
 
 from . import titles
+
+REPORT_ID = re.compile(r"report-[A-Za-z0-9_\-]+")  # manifest-doctor's report folder names, nothing else
 
 MAX_ROWS = 500        # enough to read on screen; the full list is always in the report files
 MAX_PATHS = 10        # per probable cause, as in the working note
@@ -30,7 +33,7 @@ def summarise(folder):
         "subline": subline,
         "tree": header.get("tree"),
         "manifests": [m.get("path") for m in header.get("manifests") or []],
-        "checked_at": _when(header.get("run_at")),
+        "checked_at": when_text(header.get("run_at")),
         "counts": header.get("counts", {}),
         "causes": [_cause(c) for c in report.get("causes", [])],
         "findings": [{"severity": f["severity"], "code": f["code"], "title": titles.title(f["code"]),
@@ -62,7 +65,7 @@ def _cause(cause):
             "summary": cause.get("summary", ""), "paths": paths[:MAX_PATHS], "more": max(0, len(paths) - MAX_PATHS)}
 
 
-def _when(run_at):
+def when_text(run_at):
     try:
         moment = datetime.fromisoformat(run_at)
     except (TypeError, ValueError):

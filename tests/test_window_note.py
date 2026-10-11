@@ -74,3 +74,8 @@ def test_typing_over_a_note_changed_in_notepad_is_refused_and_the_latest_text_sh
     assert "was changed somewhere else" in shown["conflict_message"]
     assert shown["q3_after_conflict"] == "Fix typed in Notepad."
     assert shown["file_kept_notepad_fix"] is True
+
+
+def test_the_recent_list_says_email_ready_once_the_email_is_made(shown):
+    [item] = shown["recent_after_email"]
+    assert "Email ready" in item

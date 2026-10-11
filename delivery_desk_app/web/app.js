@@ -27,6 +27,7 @@
       if (b.dataset.screen === screen) { b.setAttribute('aria-current', 'page'); } else { b.removeAttribute('aria-current'); }
     });
     if (screen === 'settings') { loadSettings(); }
+    if (screen === 'earlier') { loadChecks(); }
   }
 
   function toast(text) {
@@ -114,6 +115,7 @@
 
   async function finished(status) {
     state.status = status;
+    loadChecks();
     if (status.state === 'stopped') { show('start'); toast('Stopped. Nothing was changed.'); return; }
     if (status.state === 'failed') { showNotChecked(status.error, status.messages); return; }
     const outcome = status.outcome;
@@ -221,6 +223,7 @@
     byId('rsWarnings').textContent = (view.counts.WARNING || 0).toLocaleString('en-GB');
     byId('rsInfo').textContent = (view.counts.INFO || 0).toLocaleString('en-GB');
     byId('startNote').hidden = !view.has_note;
+    byId('startNote').textContent = 'Start incident note';
     alertLine('rsAlert', view, status);
     renderCauses(view.causes);
     const chipText = { ALL: ['All', view.findings_total], ERROR: ['Errors', view.counts.ERROR || 0],
@@ -235,6 +238,7 @@
       : '';
     byId('rsOutput').textContent = (status.messages || []).join('\n');
     byId('rsDetails').open = false;
+    byId('rsDetails').hidden = !(status.messages || []).length;
     show('results');
   }
 
@@ -299,6 +303,84 @@
     byId('manifestError').textContent = '';
     renderCards();
     show('start');
+  }
+
+  // --- Earlier checks and Recent ----------------------------------------------------------------------
+
+  const RESULT_WORDS = { 'PROBLEMS FOUND': ['Problems found', 'pill-bad', 'dot-bad'], CLEAN: ['All clear', 'pill-ok', 'dot-ok'],
+                         'PASSED WITH WARNINGS': ['Passed with warnings', 'pill-warn', 'dot-warn'] };
+  const NOTE_BUTTON = { in_progress: 'Continue incident note', email_ready: 'Open incident note', attention: 'Open incident note' };
+
+  async function loadChecks() {
+    state.checks = await api().list_checks();
+    renderRecent();
+    if (!byId('screen-earlier').hidden) { renderEarlier(); }
+  }
+
+  function resultWords(result) {
+    return RESULT_WORDS[result] || [result || 'Unknown', '', ''];
+  }
+
+  function renderRecent() {
+    const list = byId('recentList');
+    list.replaceChildren();
+    const checks = (state.checks && state.checks.checks) || [];
+    checks.slice(0, 5).forEach((check) => {
+      const words = resultWords(check.result);
+      let status = words[0];
+      if (check.note_state === 'email_ready') { status = 'Email ready'; }
+      else if (check.note_state === 'in_progress') { status = 'Note: ' + check.note; }
+      const button = el('button', 'recent-item');
+      button.type = 'button';
+      const text = el('span', 'recent-text');
+      text.append(el('span', 'recent-name', check.delivery), el('span', 'recent-status', status + ' · ' + check.when));
+      button.append(el('span', 'dot ' + words[2]), text);
+      button.addEventListener('click', () => openCheck(check));
+      list.append(button);
+    });
+    byId('recentEmpty').hidden = checks.length > 0;
+  }
+
+  function renderEarlier() {
+    const listed = state.checks || { checks: [], total: 0, folder: '' };
+    byId('ecFolder').textContent = listed.folder || '';
+    const query = byId('ecSearch').value.trim().toLowerCase();
+    const shown = listed.checks.filter((c) => !query || [c.delivery, c.delivery_path].concat(c.manifests)
+      .some((text) => String(text || '').toLowerCase().includes(query)));
+    const body = byId('ecRows');
+    body.replaceChildren();
+    shown.forEach((check) => {
+      const words = resultWords(check.result);
+      const tr = el('tr');
+      const when = el('td', 'when', check.when);
+      when.title = check.checked_at;
+      const delivery = el('td');
+      const open = el('button', 'open-check', check.delivery);
+      open.type = 'button';
+      open.title = check.delivery_path;
+      open.addEventListener('click', () => openCheck(check));
+      delivery.append(open);
+      const result = el('td');
+      result.append(el('span', 'pill ' + words[1], words[0]));
+      tr.append(when, delivery, el('td', 'file', check.manifests.join(', ')), result, el('td', null, check.note));
+      body.append(tr);
+    });
+    const empty = byId('ecEmpty');
+    empty.hidden = shown.length > 0;
+    empty.textContent = listed.checks.length ? 'No checks match that search.' : 'No checks yet. Your first one will appear here.';
+    let count = plural(shown.length, 'check', 'checks') + ' shown';
+    if (listed.total > listed.checks.length) { count += '. The newest ' + listed.checks.length + ' of ' + listed.total.toLocaleString('en-GB') + ' are listed.'; }
+    byId('ecCount').textContent = listed.checks.length ? count : '';
+  }
+
+  async function openCheck(check) {
+    const view = await api().get_result(check.report_id);
+    if (!view.ok) { toast(view.error); loadChecks(); return; }
+    state.result = view;
+    const status = { alerts: false, messages: [], outcome: null };   // an earlier check: no live messages
+    if (view.result === 'CLEAN') { renderAllClear(view, status); return; }
+    renderResults(view, status);
+    byId('startNote').textContent = NOTE_BUTTON[check.note_state] || 'Start incident note';
   }
 
   // --- Incident note ---------------------------------------------------------------------------------
@@ -404,6 +486,7 @@
     const email = await api().make_email(note.view.report_id);
     if (!email.ok) { byId('stillEmpty').textContent = email.error; return; }
     renderEmail(email);
+    loadChecks();
   }
 
   // --- Email ready -------------------------------------------------------------------------------------
@@ -552,6 +635,8 @@
     byId('openEmail').addEventListener('click', openEmail);
     byId('editAnswers').addEventListener('click', () => openNote(note.view.report_id));
     byId('emAgain').addEventListener('click', checkAnother);
+    byId('ecSearch').addEventListener('input', renderEarlier);
+    document.querySelectorAll('[data-new-check]').forEach((b) => b.addEventListener('click', () => show('start')));
     byId('ncBack').addEventListener('click', () => show('start'));
     byId('ncSettings').addEventListener('click', () => show('settings'));
     watchDragging(byId('folderCard'));
@@ -572,9 +657,10 @@
       byId('s-' + b.dataset.replace).focus();
     }));
     renderCards();
+    loadChecks();
   }
 
   // Called by Python after something is dropped on a card (only Python learns the real location).
-  window.app = { dropped: accept, show: show, state: state };
+  window.app = { dropped: accept, show: show, state: state, loadChecks: loadChecks };
   window.addEventListener('pywebviewready', init);
 })();

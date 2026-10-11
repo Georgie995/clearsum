@@ -68,6 +68,8 @@ def drive(window, bridge, root, copied, opened, out):
     window.run_js("document.getElementById('openEmail').click()")
     time.sleep(0.6)
     r["opened"] = [u for u in opened if str(u).startswith("mailto:")]
+    time.sleep(0.6)
+    r["recent_after_email"] = js("Array.from(document.querySelectorAll('#recentList .recent-item')).map(b => b.innerText.trim())")
 
     # Edit my answers, while the note has meanwhile been changed in a text editor.
     note_file = next(root.glob("reports/report-*/incident-note.md"))

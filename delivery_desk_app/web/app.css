@@ -293,3 +293,21 @@ textarea { font: inherit; font-size: 15px; line-height: 1.55; width: 100%; paddi
 .email-part-text.mono { font-size: 13.5px; }
 .plain-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 12px; font-size: 14.5px; color: var(--ink-2); }
 .plain-list li { display: flex; gap: 10px; align-items: flex-start; }
+
+/* --- Earlier checks and Recent ----------------------------------------------------------------------- */
+.recent-list { display: flex; flex-direction: column; gap: 2px; }
+.recent-item { display: flex; align-items: center; gap: 10px; min-height: 44px; padding: 4px 10px; border-radius: 9px; border: none;
+  background: none; color: var(--ink); text-align: left; width: 100%; }
+.recent-item:hover { background: var(--wash); }
+.recent-text { display: flex; flex-direction: column; min-width: 0; }
+.recent-name { font-family: var(--mono); font-size: 13.5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.recent-status { font-size: 12.5px; color: var(--muted); }
+.dot { width: 8px; height: 8px; border-radius: 50%; flex: none; background: var(--muted); }
+.dot-bad { background: #C2502A; }
+.dot-ok { background: #2F7D4F; }
+.dot-warn { background: #B7791F; }
+.search { min-height: 44px; padding: 0 14px; border-radius: 10px; border: 1px solid #D6D1C6; background: var(--white); font-size: 15px; max-width: 420px; }
+.checks-table .open-check { border: none; background: none; padding: 0; color: var(--accent); font: inherit; font-family: var(--mono);
+  font-size: 13.5px; text-align: left; overflow-wrap: anywhere; }
+.checks-table .open-check:hover { color: var(--accent-dark); text-decoration: underline; }
+.checks-table .when { white-space: nowrap; }

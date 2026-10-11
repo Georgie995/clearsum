@@ -6,17 +6,15 @@ never out: the page only ever learns whether a secret is saved.
 """
 
 import os
-import re
 import tempfile
 import uuid
 from pathlib import Path
 
-from . import notes, paths, results, settings_store
+from . import history, notes, paths, results, settings_store
 from .checking import CheckRun
+from .results import REPORT_ID
 from .secret_store import SecretError, SecretStore
 from .settings_store import SettingsError
-
-REPORT_ID = re.compile(r"report-[A-Za-z0-9_\-]+")  # manifest-doctor's report folder names, nothing else
 
 
 class Bridge:
@@ -106,6 +104,15 @@ class Bridge:
             return {"ok": False, "error": "That report folder can't be found."}
         self._opener(folder)
         return {"ok": True}
+
+    # --- Earlier checks --------------------------------------------------------------------------------
+
+    def list_checks(self):
+        try:
+            folder = settings_store.reports_folder(settings_store.load(self._settings_file))
+        except SettingsError as error:
+            return {"ok": False, "error": str(error), "checks": [], "total": 0}
+        return history.list_checks(folder)
 
     # --- Incident note and manager email -------------------------------------------------------------
 

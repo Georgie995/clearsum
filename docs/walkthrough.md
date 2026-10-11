@@ -88,3 +88,18 @@ A plain-English explanation of each part, written for someone with no technical 
 - **An answer that looks like web page code is just text** in the email.
 
 **Tested by:** 92 automatic tests, including the whole journey through the real window: a real check, the five answers, the email, Copy, and Open in mail app. Six protections were broken on purpose, and a test caught each one.
+
+---
+
+## Module 5: Earlier checks and the Recent list
+
+**In one sentence:** every check you've run is listed, newest first, with where its incident note is up to, so you can pick up an incident the next day exactly where you left it.
+
+**Like this:** the shelf of finished delivery folders in the office, but each one has a sticky note on the front saying "3 of 5 answered" or "email ready".
+- **Earlier checks:** when, which delivery, which manifest, the result, and the note's progress. There's a search box for deliveries and manifests.
+- **The sidebar's Recent list:** the latest five, one click away.
+- **Click any of them** to reopen the result. The button then says "Continue incident note" if you'd started it.
+
+**Under the hood, in plain words:** there's no database. The app simply looks in the reports folder each time, because every check already left its report, note and email there. That means the list can never disagree with the files.
+
+**Tested by:** 105 automatic tests. That includes the real window listing real checks, searching, reopening one, and an odd delivery name that looks like web page code, which is shown as plain text. Six protections were broken on purpose, and a test caught each one.

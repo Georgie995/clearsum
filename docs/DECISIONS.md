@@ -194,3 +194,31 @@ Each entry records the decision, the alternatives considered and why this one wa
   - Edit my answers, and the Notepad cases.
 - **An answer that looks like web page code** is plain text in the email preview.
 - **6 protections were broken on purpose, and every one was caught.**
+
+## 2026-10-11: Earlier checks are read from the reports folder, never from a database
+
+- **Decision:** the list is rebuilt from the report folders each time: `report.json` for the result, plus the presence and progress of `incident-note.md` and `manager-email*.txt`. Report headers already read are remembered while the app is open, keyed by file size and time, so a long list stays quick.
+- **Why:** nothing can drift. Delete or move a report folder, and it simply isn't listed.
+- **Note progress words:**
+  - "Not started";
+  - "3 of 5 answered";
+  - "Email ready";
+  - "No note needed" (clean or warnings);
+  - "Note needs attention" (its headings were changed by hand, so it's flagged, not hidden).
+- **Limits:** the newest 200 are listed, and the total is counted. Half-written or damaged reports are skipped quietly; the folders themselves are never touched.
+- **Which folder:** the one in use, by Georgi's rule. With alerts set up, that's delivery-ops-hub's reports folder.
+
+## 2026-10-11: Reopening a check continues where you left off
+
+- **Decision:** clicking a row, or a Recent item, opens that result. The note button then reads:
+  - "Start incident note" (not started yet);
+  - "Continue incident note" (some answers saved);
+  - "Open incident note" (email ready, or the note needs attention).
+- **No live alert line or tool messages for an earlier check:** they belong to the moment it ran, and the report folder holds the full record.
+- **The Recent list** in the sidebar shows the latest five. Problems show their note progress, for example "Email ready · today".
+
+## 2026-10-11: Module 5 tests
+
+- **105 tests.** The window tests list real checks, search, reopen one, and see "Email ready" appear after making an email.
+- **A synthetic old report with a delivery name that looks like code** (as a report made on a Linux machine could carry) is plain text in both lists.
+- **6 protections were broken on purpose, and every one was caught.**

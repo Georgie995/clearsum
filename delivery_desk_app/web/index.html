@@ -39,7 +39,8 @@
 
   <div class="recent">
     <span class="eyebrow">Recent</span>
-    <p class="recent-empty">Your checks will appear here.</p>
+    <div class="recent-list" id="recentList"></div>
+    <p class="recent-empty" id="recentEmpty">Your checks will appear here.</p>
   </div>
 
   <div class="sidebar-foot">
@@ -398,11 +399,23 @@
 
   <!-- 8 · Earlier checks (built in module 5) -->
   <section class="screen" id="screen-earlier" aria-labelledby="earlier-title" hidden>
-    <div class="page">
-      <header class="page-head">
-        <h1 id="earlier-title">Earlier checks</h1>
-        <p class="lead">Every check run on this computer, newest first. This screen arrives later in the build.</p>
+    <div class="page page-wide">
+      <header class="settings-head">
+        <div class="page-head">
+          <h1 id="earlier-title">Earlier checks</h1>
+          <p class="lead">Every check kept in <span class="mono small" id="ecFolder"></span>, newest first.</p>
+        </div>
+        <button type="button" class="button primary" data-new-check>New check</button>
       </header>
+      <input type="search" class="search" id="ecSearch" placeholder="Search by delivery or manifest" aria-label="Search earlier checks" spellcheck="false">
+      <div class="table-box">
+        <table class="findings checks-table">
+          <thead><tr><th scope="col">Checked</th><th scope="col">Delivery</th><th scope="col">Manifest</th><th scope="col">Result</th><th scope="col">Incident note</th></tr></thead>
+          <tbody id="ecRows"></tbody>
+        </table>
+        <p class="table-empty" id="ecEmpty" hidden></p>
+      </div>
+      <p class="small muted" id="ecCount"></p>
     </div>
   </section>
 

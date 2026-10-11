@@ -94,7 +94,30 @@ def drive(window, bridge, root, out):
     r["notchecked_screen"] = wait_for(window, "notchecked")
     r["nc_reason"] = js("document.getElementById('ncReason').textContent")
     r["nc_output"] = js("document.getElementById('ncOutput').textContent")
+    # Earlier checks and Recent, after the three checks above, plus an old synthetic report whose
+    # delivery name looks like code (as one made on a Linux machine could be).
     r["reports"] = sorted(p.name for p in (root / "reports").iterdir() if p.is_dir())
+    old = root / "reports" / "report-2000-01-01_000000"
+    old.mkdir()
+    (old / "report.json").write_text(json.dumps({"header": {
+        "result": "CLEAN", "tree": "/mnt/deliveries/<img src=x onerror=\"document.title='INJECTED'\">",
+        "run_at": "2000-01-01T00:00:00+00:00", "counts": {}, "manifests": [{"path": "old.md5", "entries": 1}]},
+        "causes": [], "findings": []}), encoding="utf-8")
+    window.run_js("document.querySelector('[data-screen=\"earlier\"]').click()")
+    time.sleep(1.5)
+    r["earlier_rows"] = js("Array.from(document.querySelectorAll('#ecRows tr'))"
+                           ".map(tr => Array.from(tr.children).map(td => td.innerText.trim()))")
+    r["recent"] = js("Array.from(document.querySelectorAll('#recentList .recent-item')).map(b => b.innerText.trim())")
+    r["images_in_earlier_or_recent"] = js("document.querySelectorAll('#screen-earlier img, #recentList img').length")
+    r["title_after_earlier"] = js("document.title")
+    window.run_js("const s = document.getElementById('ecSearch'); s.value = 'ep01'; s.dispatchEvent(new Event('input'));")
+    time.sleep(0.4)
+    r["search_rows"] = js("document.querySelectorAll('#ecRows tr').length")
+    window.run_js("document.querySelector('#ecRows .open-check').click()")
+    r["reopened"] = wait_for(window, "results", timeout=15)
+    r["reopened_headline"] = js("document.getElementById('results-title').textContent")
+    r["reopened_note_button"] = js("document.getElementById('startNote').textContent")
+    r["reopened_details_hidden"] = js("document.getElementById('rsDetails').hidden")
     time.sleep(1)
     r["leftover_progress_files"] = sorted(p.name for p in set(temp.glob("delivery-desk-progress-*")) - progress_before)
     Path(out).write_text(json.dumps(r, ensure_ascii=False, indent=1), encoding="utf-8")

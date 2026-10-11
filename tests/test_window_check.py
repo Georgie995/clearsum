@@ -71,3 +71,30 @@ def test_a_delivery_that_cant_be_checked_says_so_with_the_tools_own_words(shown)
 def test_reports_were_written_and_no_progress_files_were_left_behind(shown):
     assert len(shown["reports"]) == 2                 # the problem check and the clean check
     assert shown["leftover_progress_files"] == []
+
+
+def test_earlier_checks_lists_both_reports_newest_first_with_note_progress(shown):
+    rows = shown["earlier_rows"]
+    assert [row[1] for row in rows][:2] == ["show-a-ep02", "show-a-ep01"]
+    assert [row[3] for row in rows][:2] == ["All clear", "Problems found"]
+    assert [row[4] for row in rows][:2] == ["No note needed", "Not started"]
+    assert [row[0] for row in rows] == ["today", "today", "1 Jan 2000"]
+
+
+def test_the_recent_list_shows_the_latest_checks(shown):
+    assert len(shown["recent"]) == 3
+    assert shown["recent"][0].startswith("show-a-ep02") and "All clear" in shown["recent"][0]
+
+
+def test_a_delivery_name_that_looks_like_code_is_just_text_in_the_lists(shown):
+    assert shown["earlier_rows"][2][1].startswith("<img src=x onerror=")
+    assert shown["images_in_earlier_or_recent"] == 0
+    assert shown["title_after_earlier"] == "Delivery Desk"
+
+
+def test_searching_and_reopening_an_earlier_check(shown):
+    assert shown["search_rows"] == 1
+    assert shown["reopened"] is True
+    assert shown["reopened_headline"] == "2 files didn't arrive as expected."
+    assert shown["reopened_note_button"] == "Start incident note"
+    assert shown["reopened_details_hidden"] is True        # no live tool messages for an earlier check
