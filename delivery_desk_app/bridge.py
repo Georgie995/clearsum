@@ -11,7 +11,7 @@ import tempfile
 import uuid
 from pathlib import Path
 
-from . import paths, results, settings_store
+from . import notes, paths, results, settings_store
 from .checking import CheckRun
 from .secret_store import SecretError, SecretStore
 from .settings_store import SettingsError
@@ -20,12 +20,13 @@ REPORT_ID = re.compile(r"report-[A-Za-z0-9_\-]+")  # manifest-doctor's report fo
 
 
 class Bridge:
-    def __init__(self, settings_file=None, secrets=None, choose=None, engine=None, opener=None):
+    def __init__(self, settings_file=None, secrets=None, choose=None, engine=None, opener=None, clipboard=None):
         self._settings_file = Path(settings_file or settings_store.default_settings_file())
         self._secrets = secrets or SecretStore()
         self._choose = choose  # set by app.py: opens the Windows picker; returns a path or None
         self._engine = engine  # delivery-desk's engine; loaded on first use unless a test gives one
-        self._opener = opener or _open_in_explorer
+        self._opener = opener or _open_in_explorer      # a report folder, or a mailto: draft
+        self._clipboard = clipboard or _copy_to_clipboard
         self._run = None
 
     # --- Start screen ---------------------------------------------------------------------------------
@@ -106,6 +107,53 @@ class Bridge:
         self._opener(folder)
         return {"ok": True}
 
+    # --- Incident note and manager email -------------------------------------------------------------
+
+    def get_note(self, report_id):
+        folder = self._note_folder(report_id)
+        return notes.note_view(folder) if folder else _no_note()
+
+    def save_answer(self, report_id, heading, text, expected):
+        folder = self._note_folder(report_id)
+        if folder is None:
+            return _no_note()
+        note_errors = paths.load_engine("note").NoteError
+        try:
+            return notes.save_answer(folder, str(heading), str(text or ""), expected)
+        except notes.NoteConflict as conflict:
+            return {"ok": False, "conflict": True, "error": str(conflict), "note": notes.note_view(folder)}
+        except note_errors as error:
+            return {"ok": False, "conflict": False, "error": str(error)}
+        except OSError as error:
+            return {"ok": False, "conflict": False, "error": f"The note couldn't be saved: {error.strerror}"}
+
+    def make_email(self, report_id):
+        folder = self._note_folder(report_id)
+        return notes.make_email(folder) if folder else _no_note()
+
+    def copy_email(self, report_id):
+        folder = self._note_folder(report_id)
+        text = notes.latest_email(folder) if folder else None
+        if text is None:
+            return {"ok": False, "error": "Make the email first."}
+        try:
+            self._clipboard(text)
+        except OSError as error:
+            return {"ok": False, "error": str(error)}
+        return {"ok": True}
+
+    def open_email(self, report_id):
+        """A new draft in the default mail app. Delivery Desk never sends anything itself."""
+        folder = self._note_folder(report_id)
+        text = notes.latest_email(folder) if folder else None
+        if text is None:
+            return {"ok": False, "error": "Make the email first."}
+        url, body_included = notes.mailto_url(*notes.split_email(text))
+        if not body_included:
+            self._clipboard(text)  # too long for the link: it's on the clipboard to paste instead
+        self._opener(url)
+        return {"ok": True, "body_included": body_included}
+
     # --- Settings ---------------------------------------------------------------------------------------
 
     def choose_path(self, kind):
@@ -160,6 +208,10 @@ class Bridge:
         folder = reports / report_id
         return folder if (folder / "report.json").is_file() else None
 
+    def _note_folder(self, report_id):
+        folder = self._report_folder(report_id)
+        return folder if folder is not None and (folder / "incident-note.md").is_file() else None
+
     def _view(self, values, warning):
         secrets = self._secrets.status()
         if not values["ops_hub_path"]:
@@ -185,8 +237,18 @@ def _engine_settings(values):
             "reports_dir": values["reports_dir"], **common}
 
 
-def _open_in_explorer(folder):
-    os.startfile(folder)  # Windows: opens the folder in File Explorer (only ever a checked report folder)
+def _open_in_explorer(target):
+    # Windows: a checked report folder opens in File Explorer; a mailto: link opens a new draft.
+    os.startfile(target)
+
+
+def _copy_to_clipboard(text):
+    from .clipboard import copy_text
+    copy_text(text)
+
+
+def _no_note():
+    return {"ok": False, "error": "That incident note can't be found."}
 
 
 def _count_files(folder):

@@ -146,3 +146,51 @@ Each entry records the decision, the alternatives considered and why this one wa
   - it had no hostile name on the results screen.
 - **6 protections were broken on purpose, and every one was caught.**
 - **Not covered in the window:** pressing Stop mid-check. A real check of a tiny delivery is over too fast to stop. Stop is covered by the engine's tests (a program and its child are both ended) and the background-check tests.
+
+## 2026-10-11: The incident note is written through delivery-desk's own code
+
+- **Decision:** the note screen reads and writes `incident-note.md` with delivery-desk's `read_sections`, `set_section` and `replace_safely`, and the email is made with its `build_email` and `save_email`. The app adds no rules of its own about the note's format.
+- **Why:** one tested definition of the note, shared by the command line and the app.
+
+## 2026-10-11: Each answer is saved as you move on, and never over someone else's edit
+
+- **Decision:**
+  - **Saving:** each answer is written into the note when you press Next or Back, pick another question, or leave a "from the check" box.
+  - **The guard:** the app saves only if that section still says what the screen last showed. If it was changed in a text editor meanwhile, the save is refused, the latest text is shown, and a message explains what happened.
+- **Tested in the real window:** the note is changed in Notepad mid-way, then the person types and presses Next. Notepad's text is kept.
+
+## 2026-10-11: The subject summary is one line
+
+- **Decision:** its question uses a single-line box, and any line breaks become spaces when saved, because an email subject can't contain them. This is the same rule as delivery-desk's email.
+
+## 2026-10-11: Copy uses Windows' own clipboard functions
+
+- **Decision:** a small module, `clipboard.py`, calls Windows directly, so no extra library is needed. The email is copied with Windows line endings, so it pastes cleanly everywhere.
+- **Testing:** the tests use a stand-in, so running them never replaces what you have copied. **The real clipboard is checked by hand in Georgi's review.**
+
+## 2026-10-11: "Open in mail app": the subject and body when they fit; otherwise the subject plus the clipboard
+
+- **Decision (Georgi's option a):** the draft opens with a `mailto:` link.
+  - **Limit:** if the link would be longer than 1,800 characters (some mail apps cut longer links short), only the subject goes in the link. The whole email is put on the clipboard, and the screen says "paste it in".
+- **Safety:**
+  - every character in the link is encoded, so `&` or `%` in an answer can't break it;
+  - only a `mailto:` link the app built itself is ever opened;
+  - **the app never sends anything.**
+
+## 2026-10-11: Found while testing: "finished" must come after tidying up
+
+- **Problem:** a background check was marked "finished" a split second before its temporary progress file was removed. The screen could, in theory, see "finished" with the file still there.
+- **Fix:** the end state is now set last of all. A test that had passed before caught this when run alongside the new tests.
+
+## 2026-10-11: Module 4 tests
+
+- **92 tests**, including the whole flow in the real window:
+  - a real check;
+  - Start incident note;
+  - five answers typed through the screen;
+  - rewording "The problem";
+  - Make the email;
+  - Copy, and Open in mail app (with stand-ins);
+  - Edit my answers, and the Notepad cases.
+- **An answer that looks like web page code** is plain text in the email preview.
+- **6 protections were broken on purpose, and every one was caught.**

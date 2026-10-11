@@ -96,8 +96,9 @@ def test_secret_mistakes_come_back_as_plain_messages(bridge):
 
 def test_the_page_can_only_reach_the_bridges_public_actions():
     public = sorted(name for name in dir(Bridge) if not name.startswith("_"))
-    assert public == ["check_status", "choose_folder", "choose_manifest", "choose_path", "describe_folder",
-                      "describe_manifest", "get_result", "get_settings", "remove_secret", "save_secret",
+    assert public == ["check_status", "choose_folder", "choose_manifest", "choose_path", "copy_email",
+                      "describe_folder", "describe_manifest", "get_note", "get_result", "get_settings",
+                      "make_email", "open_email", "remove_secret", "save_answer", "save_secret",
                       "save_settings", "show_report_folder", "start_check", "stop_check"]
 
 

@@ -65,3 +65,26 @@ A plain-English explanation of each part, written for someone with no technical 
 - **The temporary progress note is always tidied away.** A test found that Windows sometimes refuses to delete it at the exact moment the screen is reading it, so the app now waits a moment and tries again.
 
 **Tested by:** 72 automatic tests. That includes **real checks in the real window** on three made-up deliveries (problems, clean, and can't be checked). Six protections were broken on purpose, and a test caught each one.
+
+---
+
+## Module 4: the incident note and the email
+
+**In one sentence:** from a problem result, press "Start incident note", answer five questions one at a time, and get the email for your manager, ready to copy or open in your mail app.
+
+**Like this:** the paper incident form from delivery-desk, but on screen.
+- **The top** shows what the check already knows: which delivery, and the problem. You can reword either.
+- **Then one question at a time,** with a hint under each, and Back and Next. A list on the side shows which of your five are answered.
+- **A private panel** shows the likely cause and ai-triage's summary, to help you investigate. It never goes in the email.
+- **Every answer is saved into the note as you move on,** so closing the app halfway loses nothing.
+- **When all five are answered,** "Make the email" shows it exactly as it will be sent: the subject line and your six parts, your words unchanged. Then you can:
+  - **Copy email,** and paste it into any email;
+  - **Open in mail app,** which starts a new draft. If the email is too long for that, your mail app opens with just the subject, and the email is waiting on the clipboard to paste in;
+  - **Show in folder,** which shows where `manager-email.txt` was saved. Making it again never overwrites it.
+
+**Things it is careful about:**
+- **It never sends anything.** You do.
+- **If you change the note in Notepad while the app is open,** the app won't type over it. It shows you the latest text and explains why.
+- **An answer that looks like web page code is just text** in the email.
+
+**Tested by:** 92 automatic tests, including the whole journey through the real window: a real check, the five answers, the email, Copy, and Open in mail app. Six protections were broken on purpose, and a test caught each one.

@@ -301,6 +301,144 @@
     show('start');
   }
 
+  // --- Incident note ---------------------------------------------------------------------------------
+
+  const note = { view: null, index: 0 };
+
+  async function openNote(reportId) {
+    const view = await api().get_note(reportId);
+    if (!view.ok) { toast(view.error); return; }
+    note.view = view;
+    const firstEmpty = view.questions.findIndex((q) => view.empty.includes(q.heading));
+    note.index = firstEmpty === -1 ? 0 : firstEmpty;
+    renderNote();
+    show('note');
+  }
+
+  function currentField() {
+    return note.view.questions[note.index].heading === 'Subject summary' ? byId('qLine') : byId('qText');
+  }
+
+  function renderNote() {
+    const view = note.view;
+    byId('fc-which').value = view.from_check['Which delivery'];
+    byId('fc-problem').value = view.from_check['The problem'];
+    byId('privCauses').textContent = view.private.causes;
+    byId('privTriage').textContent = view.private.triage;
+    renderQuestion();
+    renderAnswerList();
+  }
+
+  function renderQuestion() {
+    const view = note.view;
+    const q = view.questions[note.index];
+    const subject = q.heading === 'Subject summary';
+    byId('qStep').textContent = 'Question ' + (note.index + 1) + ' of ' + view.questions.length;
+    byId('qTitle').textContent = q.heading;
+    byId('qHelp').textContent = q.help;
+    byId('qText').hidden = subject;
+    byId('qLine').hidden = !subject;
+    currentField().value = view.answers[q.heading];
+    byId('qSubject').hidden = !subject;
+    byId('qSubjectText').textContent = view.subject_preview;
+    byId('qError').textContent = '';
+    byId('qPrev').disabled = note.index === 0;
+    const last = note.index === view.questions.length - 1;
+    byId('qNext').hidden = last;
+    byId('makeEmail').hidden = !last;
+    byId('stillEmpty').textContent = view.empty.length
+      ? 'Still empty: ' + view.empty.join(', ') + '. The email is made only when all five are answered, so it’s never half finished.'
+      : '';
+  }
+
+  function renderAnswerList() {
+    const list = byId('answerList');
+    list.replaceChildren();
+    note.view.questions.forEach((q, i) => {
+      const answered = !note.view.empty.includes(q.heading);
+      const item = el('li');
+      const button = el('button');
+      button.type = 'button';
+      if (i === note.index) { button.setAttribute('aria-current', 'step'); }
+      const text = el('span', 'answer-text');
+      text.append(el('span', 'answer-title', q.heading), el('span', 'answer-status', answered ? 'Answered' : 'Still empty'));
+      button.append(el('span', 'answer-mark' + (answered ? ' is-done' : ''), answered ? '✓' : String(i + 1)), text);
+      button.addEventListener('click', () => goToQuestion(i));
+      item.append(button);
+      list.append(item);
+    });
+  }
+
+  // Saves one section straight into the note, only if it still says what this screen last showed.
+  async function saveSection(heading, value, errorBox) {
+    const expected = heading in note.view.answers ? note.view.answers[heading] : note.view.from_check[heading];
+    if (value.trim() === expected.trim()) { return true; }
+    const result = await api().save_answer(note.view.report_id, heading, value, expected);
+    if (!result.ok) {
+      if (result.conflict) { note.view = result.note; renderNote(); toast(result.error); }
+      else if (errorBox) { errorBox.textContent = result.error; }
+      else { toast(result.error); }
+      return false;
+    }
+    note.view = result;
+    return true;
+  }
+
+  async function saveCurrent() {
+    const q = note.view.questions[note.index];
+    return saveSection(q.heading, currentField().value, byId('qError'));
+  }
+
+  async function goToQuestion(i) {
+    if (!(await saveCurrent())) { return; }
+    note.index = Math.max(0, Math.min(i, note.view.questions.length - 1));
+    renderQuestion();
+    renderAnswerList();
+    currentField().focus();
+  }
+
+  async function makeEmail() {
+    if (!(await saveCurrent())) { return; }
+    renderQuestion();
+    renderAnswerList();
+    const email = await api().make_email(note.view.report_id);
+    if (!email.ok) { byId('stillEmpty').textContent = email.error; return; }
+    renderEmail(email);
+  }
+
+  // --- Email ready -------------------------------------------------------------------------------------
+
+  function renderEmail(email) {
+    state.email = email;
+    byId('emSubject').textContent = email.subject;
+    const body = byId('emBody');
+    body.replaceChildren();
+    email.parts.forEach((part) => {
+      const block = el('div');
+      const mono = part.heading === 'The problem' || part.heading === 'Which delivery';
+      block.append(el('div', 'email-part-heading', part.heading + ':'), el('div', 'email-part-text' + (mono ? ' mono' : ''), part.text));
+      body.append(block);
+    });
+    byId('emFile').textContent = email.file;
+    byId('copyEmail').textContent = 'Copy email';
+    show('email');
+  }
+
+  async function copyEmail() {
+    const copied = await api().copy_email(note.view.report_id);
+    if (!copied.ok) { toast(copied.error); return; }
+    byId('copyEmail').textContent = 'Copied';
+    setTimeout(() => { byId('copyEmail').textContent = 'Copy email'; }, 1800);
+  }
+
+  async function openEmail() {
+    const opened = await api().open_email(note.view.report_id);
+    if (!opened.ok) { toast(opened.error); return; }
+    toast(opened.body_included
+      ? 'A new draft opened in your mail app. Add the recipient, a greeting and your sign-off.'
+      : 'Your mail app opened with the subject. The email is on the clipboard: paste it in.');
+  }
+
   // --- Settings ----------------------------------------------------------------------------------------
 
   const ALERTS = { set_up: ['Set up', 'pill-ok'], needs_secret: ['Needs the webhook secret', 'pill-warn'], not_set_up: ['Not set up', ''] };
@@ -404,7 +542,16 @@
       if (!opened.ok) { toast(opened.error); }
     }));
     document.querySelectorAll('[data-filter]').forEach((chip) => chip.addEventListener('click', () => setFilter(chip.dataset.filter)));
-    byId('startNote').addEventListener('click', () => toast('The incident note screen arrives in the next part of the build.'));
+    byId('startNote').addEventListener('click', () => openNote(state.result.report_id));
+    byId('noteBack').addEventListener('click', async () => { if (await saveCurrent()) { show('results'); } });
+    byId('qNext').addEventListener('click', () => goToQuestion(note.index + 1));
+    byId('qPrev').addEventListener('click', () => goToQuestion(note.index - 1));
+    byId('makeEmail').addEventListener('click', makeEmail);
+    document.querySelectorAll('[data-section]').forEach((box) => box.addEventListener('change', () => saveSection(box.dataset.section, box.value)));
+    byId('copyEmail').addEventListener('click', copyEmail);
+    byId('openEmail').addEventListener('click', openEmail);
+    byId('editAnswers').addEventListener('click', () => openNote(note.view.report_id));
+    byId('emAgain').addEventListener('click', checkAnother);
     byId('ncBack').addEventListener('click', () => show('start'));
     byId('ncSettings').addEventListener('click', () => show('settings'));
     watchDragging(byId('folderCard'));

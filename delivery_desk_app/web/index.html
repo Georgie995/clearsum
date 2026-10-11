@@ -268,6 +268,108 @@
     </div>
   </section>
 
+  <!-- 5 · Incident note -->
+  <section class="screen" id="screen-note" aria-labelledby="note-title" hidden>
+    <div class="page page-wide">
+      <button type="button" class="link-button back-link" id="noteBack">← Back to the results</button>
+      <header class="page-head">
+        <h1 id="note-title">Incident note</h1>
+        <p class="lead">Answer five short questions. Your answers go into the email for your manager word for word. Nothing rewrites them.</p>
+      </header>
+      <div class="two-col">
+        <div class="col-main">
+          <section class="panel">
+            <div class="panel-head"><h2 class="panel-title">From the check</h2><span class="help">Filled in for you. You can reword them.</span></div>
+            <div class="field">
+              <label for="fc-which">Which delivery</label>
+              <textarea id="fc-which" rows="2" data-section="Which delivery"></textarea>
+            </div>
+            <div class="field">
+              <label for="fc-problem">The problem</label>
+              <textarea id="fc-problem" rows="4" class="mono-text" data-section="The problem"></textarea>
+            </div>
+          </section>
+          <section class="question-card" aria-live="polite">
+            <span class="eyebrow" id="qStep">Question 1 of 5</span>
+            <h2 class="serif q-title"><label for="qText" id="qTitle"></label></h2>
+            <p class="help" id="qHelp"></p>
+            <textarea id="qText" rows="5"></textarea>
+            <input type="text" id="qLine" aria-labelledby="qTitle" hidden>
+            <p class="subject-preview" id="qSubject" hidden><span class="small muted">The subject line will read</span><span id="qSubjectText"></span></p>
+            <p class="field-error" id="qError" role="alert"></p>
+            <p class="small muted">Each answer is saved to the incident note as you go.</p>
+            <div class="go-row">
+              <button type="button" class="button" id="qPrev">Back</button>
+              <button type="button" class="button primary" id="qNext">Next question</button>
+              <button type="button" class="button primary" id="makeEmail" hidden>Make the email</button>
+            </div>
+            <p class="still-empty" id="stillEmpty"></p>
+          </section>
+        </div>
+        <aside class="col-side">
+          <section class="panel">
+            <h2 class="panel-title">Your five answers</h2>
+            <ol class="answer-list" id="answerList"></ol>
+          </section>
+          <section class="panel panel-quiet">
+            <h2 class="panel-title">For you only</h2>
+            <p class="help">To help you investigate. None of this is put in the email.</p>
+            <span class="eyebrow">Likely cause, not a verdict</span>
+            <pre class="tool-output" id="privCauses"></pre>
+            <span class="eyebrow">ai-triage summary</span>
+            <pre class="tool-output" id="privTriage"></pre>
+          </section>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6 · Email ready -->
+  <section class="screen" id="screen-email" aria-labelledby="email-title" hidden>
+    <div class="page page-wide">
+      <header class="page-head">
+        <h1 id="email-title">Your email is ready</h1>
+        <p class="lead">Copy it into a new email to your manager, then add your own greeting and sign-off.</p>
+      </header>
+      <div class="two-col">
+        <div class="col-main">
+          <div class="go-row">
+            <button type="button" class="button primary" id="copyEmail">Copy email</button>
+            <button type="button" class="button" id="openEmail">Open in mail app</button>
+          </div>
+          <article class="email-preview" aria-label="Email preview">
+            <div class="email-subject"><span class="small muted">Subject</span><span id="emSubject"></span></div>
+            <div class="email-body" id="emBody"></div>
+          </article>
+          <div class="go-row">
+            <button type="button" class="link-button" id="editAnswers">Edit my answers</button>
+            <button type="button" class="link-button" id="emAgain">Check another delivery</button>
+          </div>
+        </div>
+        <aside class="col-side">
+          <section class="panel">
+            <h2 class="panel-title">What's in it</h2>
+            <ul class="plain-list">
+              <li><span class="pill pill-ok">✓</span><span>The problem and which delivery, from the check.</span></li>
+              <li><span class="pill pill-ok">✓</span><span>Your answers, copied word for word. No AI touches them.</span></li>
+              <li><span class="pill">✕</span><span>Left out: the likely causes and the ai-triage summary. They stay in your note.</span></li>
+            </ul>
+          </section>
+          <section class="panel panel-quiet">
+            <h2 class="panel-title">You send it, not the app</h2>
+            <p class="help">Delivery Desk never sends anything for you. It only writes the email down.</p>
+          </section>
+          <section class="panel">
+            <h2 class="panel-title">Also saved as a file</h2>
+            <span class="mono small" id="emFile"></span>
+            <p class="help">Making it again never overwrites this one. The next is saved with a number added.</p>
+            <button type="button" class="link-button" data-show-folder>Show in folder</button>
+          </section>
+        </aside>
+      </div>
+    </div>
+  </section>
+
   <!-- The check couldn't run (not in the prototype; same Paper style) -->
   <section class="screen" id="screen-notchecked" aria-labelledby="notchecked-title" hidden>
     <div class="page page-narrow">

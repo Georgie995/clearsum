@@ -252,3 +252,44 @@ h2, h3 { margin: 0; }
 .tool-output { margin: 0; padding: 14px 16px; border-radius: 12px; background: var(--sidebar); font-family: var(--mono); font-size: 12.5px;
   white-space: pre-wrap; overflow-wrap: anywhere; max-height: 320px; overflow-y: auto; }
 .tool-output:empty { display: none; }
+
+/* --- Incident note and Email ready ---------------------------------------------------------------- */
+.back-link { align-self: flex-start; padding: 0; }
+.two-col { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 24px; }
+.col-main { flex: 1 1 520px; min-width: 0; display: flex; flex-direction: column; gap: 20px; }
+.col-side { flex: 1 1 290px; min-width: 0; display: flex; flex-direction: column; gap: 18px; }
+.panel-head { display: flex; flex-direction: column; gap: 2px; }
+.panel-title { margin: 0; font-size: 15px; font-weight: 600; }
+.panel-quiet { background: var(--sidebar); border-color: var(--sidebar); }
+.panel .eyebrow { margin-top: 4px; }
+textarea { font: inherit; font-size: 15px; line-height: 1.55; width: 100%; padding: 10px 12px; border-radius: 10px;
+  border: 1px solid #D6D1C6; background: var(--paper); color: var(--ink); resize: vertical; }
+.mono-text { font-family: var(--mono); font-size: 13.5px; }
+#qLine { width: 100%; min-height: 44px; padding: 0 12px; border-radius: 10px; border: 1px solid #D6D1C6; background: var(--paper);
+  color: var(--ink); font-size: 15px; }
+.question-card { background: var(--white); border: 1px solid var(--line); border-radius: 18px; padding: 26px; display: flex; flex-direction: column; gap: 12px; }
+.question-card p { margin: 0; }
+.q-title { font-size: 28px; }
+.subject-preview { display: flex; flex-direction: column; gap: 2px; padding: 12px 14px; border-radius: 12px; background: #F6F4F0; }
+.still-empty { font-size: 14px; color: var(--warn); }
+.still-empty:empty { display: none; }
+.answer-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 4px; }
+.answer-list button { width: 100%; display: flex; align-items: center; gap: 12px; min-height: 44px; padding: 4px 8px; border-radius: 10px;
+  border: none; background: none; text-align: left; color: var(--ink); }
+.answer-list button:hover { background: var(--wash); }
+.answer-list button[aria-current="step"] { background: var(--selected); }
+.answer-mark { flex: none; width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 600; background: var(--wash); color: var(--muted); }
+.answer-mark.is-done { background: var(--ok-wash); color: var(--ok); }
+.answer-text { display: flex; flex-direction: column; }
+.answer-title { font-size: 14.5px; font-weight: 600; }
+.answer-status { font-size: 13px; color: var(--muted); }
+.email-preview { background: var(--white); border: 1px solid var(--line); border-radius: 18px; overflow: hidden; }
+.email-subject { display: flex; flex-direction: column; gap: 2px; padding: 18px 24px; border-bottom: 1px solid var(--line-soft); background: #F6F4F0;
+  font-size: 16px; font-weight: 600; overflow-wrap: anywhere; }
+.email-body { padding: 22px 24px 26px; display: flex; flex-direction: column; gap: 18px; font-size: 15.5px; line-height: 1.6; }
+.email-part-heading { font-weight: 600; }
+.email-part-text { white-space: pre-wrap; overflow-wrap: anywhere; }
+.email-part-text.mono { font-size: 13.5px; }
+.plain-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 12px; font-size: 14.5px; color: var(--ink-2); }
+.plain-list li { display: flex; gap: 10px; align-items: flex-start; }

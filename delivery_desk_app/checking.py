@@ -49,16 +49,16 @@ class CheckRun:
                 "outcome": self._outcome_view(), "error": self._error}
 
     def _work(self):
+        state, outcome, error = "failed", None, None
         try:
             outcome = self._engine_call(self._output, self._stop)
-            self._outcome = outcome
-            self._state = "stopped" if outcome.stopped else "finished"
-        except Exception as error:  # shown to the person in plain words, never a crash
-            self._error = str(error)
-            self._state = "failed"
+            state = "stopped" if outcome.stopped else "finished"
+        except Exception as problem:  # shown to the person in plain words, never a crash
+            error = str(problem)
         finally:
-            self._ended = self._clock()
             self._tidy()
+            self._outcome, self._error, self._ended = outcome, error, self._clock()
+            self._state = state  # last of all: the screen sees the end only once everything is tidy
 
     def _tidy(self):
         """Remove our own temporary progress file. On Windows it can't be removed at the instant the

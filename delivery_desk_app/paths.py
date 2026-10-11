@@ -13,9 +13,10 @@ DELIVERY_DESK = PROJECTS / "delivery-desk"
 MANIFEST_DOCTOR = PROJECTS / "delivery-verify"   # manifest-doctor's local folder
 
 
-def load_engine():
+def load_engine(part="desk"):
+    """One part of delivery-desk's engine: desk (checking), note, manager_email or files."""
     if not (DELIVERY_DESK / "delivery_desk").is_dir():
         raise RuntimeError(f"delivery-desk's engine wasn't found at {DELIVERY_DESK}")
     if str(DELIVERY_DESK) not in sys.path:
         sys.path.insert(0, str(DELIVERY_DESK))
-    return importlib.import_module("delivery_desk.desk")
+    return importlib.import_module(f"delivery_desk.{part}")
