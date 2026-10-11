@@ -1,6 +1,6 @@
 """Friendly titles for manifest-doctor's codes, shown on screen with the code in small print.
 
-DRAFTS written from what each check does in manifest-doctor's code: Georgi reviews every title.
+Written from what each check does in manifest-doctor's code; reviewed and approved by Georgi (2026-10-11).
 The manager email keeps the codes (his decision); these are only for people who don't know them.
 """
 

@@ -103,7 +103,7 @@ Each entry records the decision, the alternatives considered and why this one wa
   - **Warnings only:** "Every file arrived intact", plus how many warnings.
   - **Problems:** "N files didn't arrive as expected." This counts *files*, not findings: one file listed twice and mismatched is still one file.
   - **Only manifest problems:** "The manifest itself has problems."
-- **Friendly titles** for all 20 codes are drafts awaiting Georgi's review. An unknown code is shown as itself.
+- **Friendly titles** for all 20 codes: written from manifest-doctor's code, **reviewed and approved by Georgi**. An unknown code is shown as itself.
 - **Limits:** up to 500 findings on screen, with the total shown, and 10 files per probable cause, as in the working note. The full lists are always in the report files.
 
 ## 2026-10-11: The Checking screen's three steps follow what manifest-doctor really does

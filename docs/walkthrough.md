@@ -58,7 +58,7 @@ A plain-English explanation of each part, written for someone with no technical 
 **Under the hood, in plain words:**
 - **The check runs "in the background",** so the window never freezes, however big the delivery.
 - **The progress bar reads the little progress note** that manifest-doctor writes while it works (module 1). Time left is worked out from how fast it has been reading so far.
-- **Friendly titles** such as "Checksum doesn't match the manifest" sit beside the codes. **They're drafts for your review.**
+- **Friendly titles** such as "Checksum doesn't match the manifest" sit beside the codes. You reviewed and approved all 20.
 
 **Things it is careful about:**
 - **A file name can't take over the app,** on the results screen either. A test checks a manifest that lists a file called `<img … onerror=…>`: it shows up as plain text and does nothing.
