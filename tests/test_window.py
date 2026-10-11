@@ -48,3 +48,8 @@ def test_a_saved_secret_goes_to_the_safe_and_disappears_from_the_page(shown):
     assert shown["secret_in_store"] is True
     assert shown["secret_box_empty"] is True and shown["secret_saved_shown"] is True
     assert shown["secret_in_page"] is False
+
+
+def test_the_bundled_fonts_load_from_the_app_itself(shown):
+    assert shown["fonts_loaded"] == ["IBM Plex Mono", "Instrument Sans", "Newsreader"]
+

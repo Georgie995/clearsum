@@ -69,6 +69,7 @@ def drive(window, bridge, keyring, out):
     r["secret_saved_shown"] = not js("document.getElementById('webhook_secret-saved').hidden")
     r["secret_in_page"] = SECRET in js("document.documentElement.outerHTML + document.body.innerText")
     r["secret_in_store"] = keyring.saved.get(("Delivery Desk", "webhook_secret")) == SECRET
+    r["fonts_loaded"] = sorted(set(js("Array.from(document.fonts).filter(f => f.status === 'loaded').map(f => f.family.replace(/\"/g, ''))")))
     Path(out).write_text(json.dumps(r, ensure_ascii=False, indent=1), encoding="utf-8")
     window.destroy()
 
