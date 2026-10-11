@@ -114,8 +114,6 @@ All test data and screenshots are synthetic. No client names, project or tape co
 
 ## AI assistance
 
-> **DRAFT. Georgi to confirm or correct before publishing.**
-
 The code in this repository was written with an AI coding assistant (Claude, by Anthropic). I did not write the Python, HTML, CSS or JavaScript by hand.
 
 What I did:
