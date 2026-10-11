@@ -166,7 +166,7 @@ Each entry records the decision, the alternatives considered and why this one wa
 ## 2026-10-11: Copy uses Windows' own clipboard functions
 
 - **Decision:** a small module, `clipboard.py`, calls Windows directly, so no extra library is needed. The email is copied with Windows line endings, so it pastes cleanly everywhere.
-- **Testing:** the tests use a stand-in, so running them never replaces what you have copied. **The real clipboard is checked by hand in Georgi's review.**
+- **Testing:** the tests use a stand-in, so running them never replaces what you have copied. **The real clipboard was checked by hand in Georgi's review (2026-10-11): Copy, then paste into Notepad, worked.**
 
 ## 2026-10-11: "Open in mail app": the subject and body when they fit; otherwise the subject plus the clipboard
 
@@ -227,3 +227,35 @@ Each entry records the decision, the alternatives considered and why this one wa
 
 - **What he did:** used the app himself on synthetic practice deliveries, following `practice/app-review/REVIEW-CHECKLIST.md`.
 - **Verdict, in his words:** "everything works well, fast, clear and looks neat, tidy, minimalistic." No changes were requested.
+
+## 2026-10-11: Packaging: the app starts copies of itself as its tools ("tool mode")
+
+- **Problem:** the engine starts manifest-doctor (and, with alerts, delivery-ops-hub) as separate programs using Python. A packaged app has no separate Python.
+- **Decision:** the packaged app's front door (`packaging/launcher.py`) reads how it was started:
+  - **Double-clicked:** it opens the window.
+  - **Started as `Delivery Desk.exe -m manifest_doctor …`:** it behaves exactly like `python -m manifest_doctor …`, so the engine needs no changes.
+  - **Only the app's own two tools** (`manifest_doctor`, `delivery_ops_hub`) can be started this way. Anything else is refused.
+- **Proven on the built app:**
+  - a real check through tool mode, with the tools' messages collected;
+  - **two levels:** the app acting as delivery-ops-hub, which started the app again as manifest-doctor. With n8n unreachable, the alert went to the outbox as designed.
+- **The engine travels inside the app:** manifest-doctor, delivery-desk and delivery-ops-hub are all standard-library Python. ai-triage stays outside, because it needs its own Python with the Anthropic library. It's optional, and set up in Settings.
+- **Rejected:**
+  - shipping a separate Python: larger, and more to keep up to date;
+  - running the tools inside the app itself: Stop could then no longer end a check cleanly.
+
+## 2026-10-11: A folder app, a self-test, and a one-command build
+
+- **A folder app, not one big .exe:** it starts faster, because nothing is unpacked to a temporary folder on every launch. Antivirus tools also tend to trust it more. UPX compression is off for the same reason. It's shipped as a 14 MB zip.
+- **`Delivery Desk.exe --self-test result.json`:**
+  - opens the window and checks the page and fonts;
+  - runs a real check of a tiny made-up delivery through tool mode;
+  - confirms Windows Credential Manager is reachable, without saving anything.
+- **`packaging/build.py`:** writes the notices, builds, runs the self-test, and **only zips the app if the self-test passes.** The tests also run the self-test on any build that exists.
+
+## 2026-10-11: Third-party notices are generated, never hand-written
+
+- **Why:** the app carries other people's open-source code. Their licences (MIT, BSD and others) require their notices to travel with it.
+- **Decision:** `packaging/make_notices.py` works out every bundled library from what pywebview and keyring actually need on Windows, and copies each one's licence text. It also adds Python's licence, Microsoft's WebView2 SDK notice (quoted exactly from its NuGet licence) and a note about PyInstaller.
+  - **A test fails if any bundled library is missing, or has only a licence *name* rather than its text.**
+- **Found:** `proxy_tools` ships no licence file. PyPI says "MIT", and its source repository's licence file is BSD-style with copyright lines, so that file is reproduced exactly.
+- **PyInstaller's own licence:** GPL with an exception that explicitly allows packaging programs under any licence.
