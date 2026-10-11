@@ -222,3 +222,8 @@ Each entry records the decision, the alternatives considered and why this one wa
 - **105 tests.** The window tests list real checks, search, reopen one, and see "Email ready" appear after making an email.
 - **A synthetic old report with a delivery name that looks like code** (as a report made on a Linux machine could carry) is plain text in both lists.
 - **6 protections were broken on purpose, and every one was caught.**
+
+## 2026-10-11: Georgi's hands-on review (module 6)
+
+- **What he did:** used the app himself on synthetic practice deliveries, following `practice/app-review/REVIEW-CHECKLIST.md`.
+- **Verdict, in his words:** "everything works well, fast, clear and looks neat, tidy, minimalistic." No changes were requested.
