@@ -138,3 +138,23 @@ A plain-English explanation of each part, written for someone with no technical 
 **Tested by:**
 - **4 new tests in the app and 18 in manifest-doctor.** They include real checks in the real window.
 - **Protections broken on purpose:** every one was caught.
+
+## Module 8: Compare lists (added 2026-10-14)
+
+**In one sentence:** give it two versions of a delivery's checksum list, earlier and later, and it shows what happened to every file between them.
+
+**Like this:** laying two versions of a delivery note side by side and ticking them off.
+- **The same name on both:** it's the same file. If its checksum changed, that's flagged first, because that's usually where a problem came in.
+- **A name missing, but the same checksum under a new name:** the file was renamed or moved.
+- **Several files with the same checksum** (copies, or empty files): it won't guess which became which. It shows them together.
+- **Anything left over** is only in one of the two lists.
+- **A search box** answers a client's "where did this file go?".
+
+**Under the hood, in plain words:**
+- **It only reads the two lists,** never the files themselves, so it's quick.
+- **Each comparison is saved in your reports folder,** in its own `compare-…` folder.
+- **The rules live in manifest-doctor,** so the app and the command line always agree.
+
+**Tested by:**
+- **18 new automatic tests in the app and 27 in manifest-doctor.** These include the real window comparing two made-up list versions.
+- **Every protection broken on purpose was caught.**

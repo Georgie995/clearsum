@@ -27,6 +27,9 @@ ClearSum is the desktop version of [delivery-desk](https://github.com/Georgie995
 
    Each answer is saved as you go. **Make the email** shows it exactly as it will read. **Copy** it, or **Open in mail app**. The app never sends anything itself.
 4. **Pick up where you left off.** **Earlier checks** lists every check, with where its note is up to ("3 of 5 answered", "Email ready").
+5. **Compare two lists.** Drop in two versions of a delivery's checksum list, the **earlier list** and the **later list**, to see what changed between them. Only the two lists are read.
+   - **The groups:** changed (same name, different checksum), renamed or moved, only in one list, and files it can't tell apart (shown together, never guessed).
+   - **A search box** answers "where did this file go?".
 
 | Problems found | Incident note | Email ready |
 |---|---|---|
@@ -86,7 +89,7 @@ ENGINE    my earlier tools, unchanged in what they decide:
   ```
 - **Run:** `.venv\Scripts\python -m clearsum`, or double-click `run-app.bat`.
 - **Test:** `.venv\Scripts\python -m pytest`.
-  - **143 tests,** including real checks driven through the real window. Window tests open the app for a few seconds.
+  - **161 tests,** including real checks driven through the real window. Window tests open the app for a few seconds.
   - **Skips:** tests that need the sibling repos or a built app are skipped when those are absent.
   - **Proven by breaking things on purpose:** every protection was broken one at a time, and a test failed each time.
 - **Build:** `.venv\Scripts\python packaging\build.py`. It writes the third-party notices, builds with PyInstaller, runs the packaged app's own self-test, and only then zips it.

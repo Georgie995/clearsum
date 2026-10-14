@@ -25,3 +25,12 @@ def load_engine(part="desk"):
     if str(DELIVERY_DESK) not in sys.path:
         sys.path.insert(0, str(DELIVERY_DESK))
     return importlib.import_module(f"delivery_desk.{part}")
+
+
+def load_comparer():
+    """manifest-doctor's list comparison, run inside the app: it only ever reads two lists."""
+    if not (MANIFEST_DOCTOR / "manifest_doctor").is_dir():
+        raise RuntimeError(f"manifest-doctor wasn't found at {MANIFEST_DOCTOR}")
+    if str(MANIFEST_DOCTOR) not in sys.path:
+        sys.path.insert(0, str(MANIFEST_DOCTOR))
+    return importlib.import_module("manifest_doctor.compare")

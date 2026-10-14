@@ -10,7 +10,7 @@ import tempfile
 import uuid
 from pathlib import Path
 
-from . import history, notes, paths, results, settings_store
+from . import comparisons, history, notes, paths, results, settings_store
 from .checking import CheckRun
 from .results import REPORT_ID
 from .secret_store import SecretError, SecretStore
@@ -102,6 +102,36 @@ class Bridge:
         folder = self._report_folder(report_id)
         if folder is None:
             return {"ok": False, "error": "That report folder can't be found."}
+        self._opener(folder)
+        return {"ok": True}
+
+    # --- Compare lists: two versions of a delivery's checksum list -----------------------------------------
+
+    def compare_lists(self, earlier, later):
+        for described in (self.describe_manifest(earlier), self.describe_manifest(later)):
+            if not described["ok"]:
+                return described
+        try:
+            reports = Path(settings_store.reports_folder(settings_store.load(self._settings_file)))
+        except SettingsError as error:
+            return {"ok": False, "error": f"{error} Open Settings to fix it."}
+        comparer = paths.load_comparer()
+        try:
+            comparison = comparer.compare_lists(earlier, later)
+        except comparer.ManifestError as error:
+            return {"ok": False, "error": f"The lists couldn't be compared: {error}"}
+        return comparisons.summarise(comparer.write_comparison(comparison, reports))
+
+    def search_comparison(self, compare_id, text):
+        folder = self._comparison_folder(compare_id)
+        if folder is None:
+            return {"ok": False, "error": "That comparison can't be found."}
+        return {"ok": True, **comparisons.search(folder, text)}
+
+    def show_comparison_folder(self, compare_id):
+        folder = self._comparison_folder(compare_id)
+        if folder is None:
+            return {"ok": False, "error": "That comparison folder can't be found."}
         self._opener(folder)
         return {"ok": True}
 
@@ -214,6 +244,17 @@ class Bridge:
             return None
         folder = reports / report_id
         return folder if (folder / "report.json").is_file() else None
+
+    def _comparison_folder(self, compare_id):
+        """Only a real comparison folder, directly inside the reports folder in use."""
+        if not isinstance(compare_id, str) or not comparisons.COMPARE_ID.fullmatch(compare_id):
+            return None
+        try:
+            reports = Path(settings_store.reports_folder(settings_store.load(self._settings_file)))
+        except SettingsError:
+            return None
+        folder = reports / compare_id
+        return folder if (folder / "comparison.json").is_file() else None
 
     def _note_folder(self, report_id):
         folder = self._report_folder(report_id)

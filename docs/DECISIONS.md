@@ -332,3 +332,26 @@ Each entry records the decision, the alternatives considered and why this one wa
   - **4 new tests:** 143 in total.
   - **Real checks in the real window:** the exact sentences for a delivery with problems and for a clean one, and no panel for an older report.
   - **Breaking it on purpose:** 5 protections were broken one at a time, and a test caught each one.
+
+## 2026-10-14: A Compare lists screen
+
+- **Need:** Georgi works backwards through versions of a delivery's checksum list, two at a time, to find where a problem started (see manifest-doctor's DECISIONS, 2026-10-14). The app should do this without the command line.
+- **Decision:**
+  - **The screen:** a "Compare lists" screen in the sidebar, with two cards, **Earlier list** and **Later list** (Georgi's wording). They work like the Start screen's cards: drop or choose.
+  - **How it runs:** the comparison runs inside the app, using manifest-doctor's own code. It only reads two lists, so there's no separate program to start and nothing to stop.
+  - **Where it's saved:** each comparison goes in the reports folder as a `compare-…` folder. Comparisons aren't mixed into Earlier checks in this version.
+- **On screen:**
+  - **The result:** "N files differ between the two lists" or "The two lists describe exactly the same files".
+  - **Notes:** unreadable lines are shown first.
+  - **The hint** when the lists start from different folders.
+  - **Each group with files in it,** as a table. Long groups are shortened on screen, and the full list is in comparison.csv.
+  - **A search box across every file, unchanged ones included,** for "where did this file go?".
+  - **"What this comparison can tell you".**
+- **Safety:**
+  - every name from a list is shown as text, never as page code;
+  - the page can only reach real `compare-…` folders inside the reports folder;
+  - three new page actions (compare, search, show in folder) are added to the fixed list, and its test.
+- **Tested by:**
+  - **18 new tests:** 161 in total. These include the real window comparing two made-up list versions, searching, and a name that looks like web page code shown as plain text.
+  - **8 protections broken on purpose,** and a test caught each one. One test was strengthened along the way, because its search was already lower case.
+  - **Not tested automatically:** dragging a real file onto the two new cards, because a window test can't drag. Georgi tries that by hand.

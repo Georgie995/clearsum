@@ -81,6 +81,7 @@ This app is for **"anyone who might need to use it but isn't comfortable with th
 | **Incident note** | One question at a time. Each answer is saved straight into `incident-note.md` using delivery-desk's own tested code (only empty sections are filled, and it never overwrites). The private part is shown, but never put in the email. |
 | **Email ready** | delivery-desk writes `manager-email.txt` (never overwritten, `-2` next time). **Copy email** puts it on the clipboard. **Open in mail app** opens a new draft in the default mail app. The app never sends anything. |
 | **Earlier checks / Recent** | Reads the reports folder: each `report-*` folder, with its result, note progress (e.g. "3 of 5 answered") and whether an email exists. There's no database, so it can't drift from the files. |
+| **Compare lists** (added 2026-10-14) | Two cards, **Earlier list** and **Later list**, filled by drop or choose. **Compare lists** runs manifest-doctor's comparison inside the app, because it only reads two lists, and saves it in the reports folder as a `compare-…` folder. The results show counts, any notes about unreadable lines, each group as a table, a search box ("where did a file go?") and **Show comparison in folder**. The pairing rules are in manifest-doctor's DESIGN.md, section 13. |
 | **Settings** | Locations and secrets, as in the prototype (version 16), plus the stuck-warning time (added 2026-10-14). Settings live in a small file in the user's app-data folder; **secrets never go there**. |
 
 ## 6. Safety rules

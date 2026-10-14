@@ -24,7 +24,8 @@ def create_window(bridge):
 
 
 def bind_drops(window, bridge):
-    for kind, selector in (("folder", "#folderCard"), ("manifest", "#manifestCard")):
+    for kind, selector in (("folder", "#folderCard"), ("manifest", "#manifestCard"),
+                           ("earlier", "#earlierCard"), ("later", "#laterCard")):
         card = window.dom.get_element(selector)
         card.events.dragover += DOMEventHandler(_ignore, prevent_default=True, stop_propagation=True, debounce=500)
         card.events.drop += DOMEventHandler(_on_drop(window, bridge, kind), prevent_default=True, stop_propagation=True)

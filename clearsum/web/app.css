@@ -160,6 +160,14 @@ h2, h3 { margin: 0; }
   background: var(--paper); color: var(--ink); font-family: var(--mono); font-size: 13.5px; }
 .field-row input[type="password"] { font-family: var(--sans); font-size: 14.5px; }
 .field.has-error input { border-color: var(--bad); background: var(--bad-wash); }
+.banner-info { margin: 0; padding: 12px 16px; border-radius: 12px; background: #F6F4F0; color: var(--ink-2); font-size: 14.5px; }
+#cmpNotes { display: flex; flex-direction: column; gap: 10px; }
+#cmpNotes:empty { display: none; }
+.cmp-headline { margin: 6px 0 0; }
+.cmp-search { width: 100%; max-width: 520px; min-height: 44px; padding: 0 14px; border-radius: 10px; border: 1px solid #D6D1C6;
+  background: var(--paper); color: var(--ink); font-family: var(--mono); font-size: 13.5px; }
+.cmp-table td { white-space: pre-line; }
+.cmp-group h2 { margin-bottom: 4px; }
 .proves p { margin: 0 0 10px; max-width: 72ch; }
 .proves-label { font-weight: 600; }
 .proves-list { margin: 0 0 12px; padding-left: 20px; max-width: 72ch; }

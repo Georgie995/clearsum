@@ -54,3 +54,9 @@ def test_a_file_name_with_quotes_and_script_tags_cannot_break_out_of_the_call():
     nasty = 'D:\\x\\a"); document.title=("pwned</script>\u2028.md5'
     kind, info = dropped("manifest", [{"pywebviewFullPath": nasty}])
     assert info["path"] == nasty                       # arrived intact, as data
+
+
+def test_a_list_dropped_on_the_compare_screen_is_described_like_a_manifest():
+    for side in ("earlier", "later"):
+        kind, info = dropped(side, [{"pywebviewFullPath": "D:\\Lists\\v1.md5"}])
+        assert kind == side and info["entries"] == 3

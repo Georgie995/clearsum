@@ -96,10 +96,11 @@ def test_secret_mistakes_come_back_as_plain_messages(bridge):
 
 def test_the_page_can_only_reach_the_bridges_public_actions():
     public = sorted(name for name in dir(Bridge) if not name.startswith("_"))
-    assert public == ["check_status", "choose_folder", "choose_manifest", "choose_path", "copy_email",
+    assert public == ["check_status", "choose_folder", "choose_manifest", "choose_path", "compare_lists", "copy_email",
                       "describe_folder", "describe_manifest", "get_note", "get_result", "get_settings",
                       "list_checks", "make_email", "open_email", "remove_secret", "save_answer", "save_secret",
-                      "save_settings", "show_report_folder", "start_check", "stop_check"]
+                      "save_settings", "search_comparison", "show_comparison_folder", "show_report_folder",
+                      "start_check", "stop_check"]
 
 
 # --- Module 3: starting a check, its results, and Show report in folder ---------------------------------
@@ -222,3 +223,49 @@ def test_each_check_uses_the_stuck_warning_time_from_settings(tmp_path, checker)
     checker.start_check(str(tree), str(manifest))
     assert checker._run._stall_seconds == 180
     assert "stalled" in wait_done(checker)
+
+
+# --- Compare lists: two versions of a checksum list (needs manifest-doctor next to the app) ----------
+
+def two_lists(tmp_path):
+    import hashlib
+    sums = {n: hashlib.md5(n.encode()).hexdigest() for n in ("a", "b", "x")}
+    earlier = tmp_path / "v1.md5"
+    earlier.write_text(f"Reel01/a.mov|{sums['a']}\nReel01/old.mov|{sums['x']}\n", encoding="utf-8")
+    later = tmp_path / "v2.md5"
+    later.write_text(f"Reel01/a.mov|{sums['a']}\nReel01/new.mov|{sums['x']}\nReel01/b.mov|{sums['b']}\n", encoding="utf-8")
+    return earlier, later
+
+
+def test_two_lists_are_compared_and_kept_in_the_reports_folder(tmp_path, checker):
+    view = checker.compare_lists(*map(str, two_lists(tmp_path)))
+    assert view["ok"] is True and view["compare_id"].startswith("compare-")
+    assert (checker.reports / view["compare_id"] / "comparison.json").is_file()
+    assert view["groups"][1]["rows"] == [{"earlier": "Reel01/old.mov", "later": "Reel01/new.mov", "note": ""}]
+
+
+def test_lists_that_cant_be_compared_get_a_plain_message(tmp_path, checker):
+    earlier, _ = two_lists(tmp_path)
+    junk = tmp_path / "notes.txt"
+    junk.write_text("this is not a checksum list\n", encoding="utf-8")
+    result = checker.compare_lists(str(earlier), str(junk))
+    assert result["ok"] is False and result["error"].startswith("The lists couldn't be compared:")
+    assert "can't be found" in checker.compare_lists(str(earlier), str(tmp_path / "gone.md5"))["error"]
+    assert not list(checker.reports.glob("compare-*")) if checker.reports.exists() else True
+
+
+def test_search_and_show_in_folder_only_reach_real_comparison_folders(tmp_path, checker):
+    view = checker.compare_lists(*map(str, two_lists(tmp_path)))
+    assert checker.search_comparison(view["compare_id"], "new")["rows"][0]["group"] == "Renamed or moved"
+    assert checker.search_comparison("../../Windows", "x")["ok"] is False
+    assert checker.show_comparison_folder(view["compare_id"]) == {"ok": True}
+    assert checker.opened == [checker.reports / view["compare_id"]]
+    assert checker.show_comparison_folder("report-2026-10-11_160742")["ok"] is False
+
+
+def test_a_real_comparison_outside_the_reports_folder_is_still_out_of_reach(tmp_path, checker):
+    outside = tmp_path / "compare-outside"
+    outside.mkdir()
+    (outside / "comparison.json").write_text("{}", encoding="utf-8")
+    assert checker.search_comparison("../compare-outside", "x")["ok"] is False
+    assert checker.show_comparison_folder("../compare-outside")["ok"] is False and checker.opened == []

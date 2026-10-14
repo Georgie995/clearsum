@@ -31,6 +31,10 @@
       <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 7.5V12l3 2"></path></svg>
       Earlier checks
     </button>
+    <button type="button" class="nav-link" data-screen="compare">
+      <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4v16M17 4v16"></path><path d="M10 8h4M10 12h4M10 16h4"></path></svg>
+      Compare lists
+    </button>
     <button type="button" class="nav-link" data-screen="settings">
       <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"></path><circle cx="16" cy="7" r="2"></circle><circle cx="10" cy="17" r="2"></circle></svg>
       Settings
@@ -568,6 +572,107 @@
           <button type="button" class="button primary" id="saveSettings">Save settings</button>
           <span class="saved-note" id="savedNote" role="status"></span>
         </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 10 · Compare lists: two versions of a delivery's checksum list (added 2026-10-14) -->
+  <section class="screen" id="screen-compare" aria-labelledby="compare-title" hidden>
+    <div class="page page-wide">
+      <header class="page-head">
+        <h1 id="compare-title">Compare two lists</h1>
+        <p class="lead">Add two versions of a delivery's checksum list. Files are paired by name, then by checksum, so you can see what changed, what was renamed or moved, and what's missing. Only the lists are read.</p>
+      </header>
+
+      <div class="cards">
+        <div class="card drop" id="earlierCard">
+          <div class="card-empty" id="earlierEmpty">
+            <div class="tile">
+              <svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h7l4 4v14H7z"></path><path d="M14 3v4h4"></path><path d="M10 12h5M10 15.5h5"></path></svg>
+            </div>
+            <div class="card-text">
+              <h2>Earlier list</h2>
+              <p>The older version, such as the initial delivery's list.</p>
+            </div>
+            <button type="button" class="button" id="chooseEarlier">Choose list…</button>
+          </div>
+          <div class="card-chosen" id="earlierChosen" hidden>
+            <div class="card-top">
+              <div class="tile tile-ok">
+                <svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h7l4 4v14H7z"></path><path d="M14 3v4h4"></path><path d="M10 12h5M10 15.5h5"></path></svg>
+              </div>
+              <span class="pill pill-ok">Added</span>
+            </div>
+            <div class="card-facts">
+              <span class="eyebrow">Earlier list</span>
+              <span class="mono big" id="earlierName"></span>
+              <span class="mono small muted" id="earlierPath"></span>
+              <span class="fact" id="earlierEntries"></span>
+            </div>
+            <button type="button" class="link-button" id="changeEarlier">Choose a different list</button>
+          </div>
+          <p class="card-error" id="earlierError" role="alert"></p>
+        </div>
+
+        <div class="card drop" id="laterCard">
+          <div class="card-empty" id="laterEmpty">
+            <div class="tile">
+              <svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h7l4 4v14H7z"></path><path d="M14 3v4h4"></path><path d="M10 12h5M10 15.5h5"></path></svg>
+            </div>
+            <div class="card-text">
+              <h2>Later list</h2>
+              <p>The newer version, such as the latest delivery's list.</p>
+            </div>
+            <button type="button" class="button" id="chooseLater">Choose list…</button>
+          </div>
+          <div class="card-chosen" id="laterChosen" hidden>
+            <div class="card-top">
+              <div class="tile tile-ok">
+                <svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h7l4 4v14H7z"></path><path d="M14 3v4h4"></path><path d="M10 12h5M10 15.5h5"></path></svg>
+              </div>
+              <span class="pill pill-ok">Added</span>
+            </div>
+            <div class="card-facts">
+              <span class="eyebrow">Later list</span>
+              <span class="mono big" id="laterName"></span>
+              <span class="mono small muted" id="laterPath"></span>
+              <span class="fact" id="laterEntries"></span>
+            </div>
+            <button type="button" class="link-button" id="changeLater">Choose a different list</button>
+          </div>
+          <p class="card-error" id="laterError" role="alert"></p>
+        </div>
+      </div>
+
+      <div class="go-row">
+        <button type="button" class="button primary" id="compareButton" disabled>Compare lists</button>
+        <p class="muted" id="compareHint">Add the earlier list and the later list to start.</p>
+      </div>
+      <p class="card-error" id="compareError" role="alert"></p>
+
+      <div id="cmpResults" hidden>
+        <header class="result-head">
+          <span class="pill" id="cmpPill"></span>
+          <h2 class="serif cmp-headline" id="cmpHeadline"></h2>
+          <p class="lead">Compared <span class="mono" id="cmpEarlier"></span> (earlier) with <span class="mono" id="cmpLater"></span> (later) on <span id="cmpWhen"></span>.</p>
+        </header>
+        <div id="cmpNotes"></div>
+        <div class="go-row">
+          <button type="button" class="button" id="cmpShowFolder">Show comparison in folder</button>
+          <button type="button" class="link-button" id="cmpAgain">Compare two other lists</button>
+        </div>
+        <section class="block-top">
+          <h2 class="serif">Where did a file go?</h2>
+          <input type="search" class="cmp-search" id="cmpSearch" placeholder="Type part of a file name" spellcheck="false" aria-label="Search both lists">
+          <p class="small muted" id="cmpSearchCount"></p>
+          <div id="cmpSearchBox" hidden></div>
+        </section>
+        <div id="cmpGroups"></div>
+        <p class="muted" id="cmpUnchanged"></p>
+        <section class="block-top proves">
+          <h2 class="serif">What this comparison can tell you</h2>
+          <p id="cmpLimits"></p>
+        </section>
       </div>
     </div>
   </section>

@@ -638,6 +638,151 @@
 
   // --- Wiring ---------------------------------------------------------------------------------------
 
+  // --- Compare lists: two versions of a delivery's checksum list ----------------------------------------
+  // Names come from lists someone else made, so they only ever go into the page as text.
+
+  const cmp = { earlier: null, later: null, view: null, searchNumber: 0 };
+
+  function acceptList(side, info) {
+    if (!info) { return; }                               // the picker was cancelled
+    byId(side + 'Error').textContent = info.ok ? '' : info.error;
+    if (info.ok) { cmp[side] = info; }
+    renderListCards();
+  }
+
+  function renderListCards() {
+    ['earlier', 'later'].forEach((side) => {
+      const info = cmp[side];
+      byId(side + 'Empty').hidden = !!info;
+      byId(side + 'Chosen').hidden = !info;
+      byId(side + 'Card').classList.toggle('is-chosen', !!info);
+      if (info) {
+        byId(side + 'Name').textContent = info.name;
+        byId(side + 'Path').textContent = info.path;
+        byId(side + 'Entries').textContent = plural(info.entries, 'entry', 'entries');
+      }
+    });
+    const ready = !!(cmp.earlier && cmp.later);
+    byId('compareButton').disabled = !ready;
+    let hint = 'Add the earlier list and the later list to start.';
+    if (ready) { hint = 'Only the two lists are read, so this is quick.'; }
+    else if (cmp.earlier) { hint = 'Now add the later list.'; }
+    else if (cmp.later) { hint = 'Now add the earlier list.'; }
+    byId('compareHint').textContent = hint;
+  }
+
+  async function compareLists() {
+    const button = byId('compareButton');
+    button.disabled = true;
+    button.textContent = 'Comparing…';
+    byId('compareError').textContent = '';
+    const view = await api().compare_lists(cmp.earlier.path, cmp.later.path);
+    button.textContent = 'Compare lists';
+    renderListCards();
+    if (!view.ok) { byId('compareError').textContent = view.error; return; }
+    cmp.view = view;
+    renderComparison(view);
+  }
+
+  function renderComparison(view) {
+    const c = view.counts;
+    const differing = c.changed + c.renamed + c.only_earlier + c.only_later + c.cannot_tell_files
+      + c.empty_earlier + c.empty_later;
+    const pill = byId('cmpPill');
+    pill.textContent = view.result;
+    pill.className = 'pill ' + (view.identical ? 'pill-ok' : 'pill-warn');
+    let headline = 'The two lists describe exactly the same files.';
+    if (!view.identical) {
+      headline = differing ? plural(differing, 'file differs', 'files differ') + ' between the two lists.'
+        : 'No differences in the lines that could be read.';
+    }
+    byId('cmpHeadline').textContent = headline;
+    byId('cmpEarlier').textContent = view.earlier.name;
+    byId('cmpLater').textContent = view.later.name;
+    byId('cmpWhen').textContent = view.compared_at;
+    byId('cmpNotes').replaceChildren(...view.notes.map((note) => el('p', 'banner-warning', note)),
+      ...(view.hint ? [el('p', 'banner-info', view.hint)] : []));
+    byId('cmpGroups').replaceChildren(...view.groups.filter((g) => g.total).map(groupSection));
+    byId('cmpUnchanged').textContent = plural(view.unchanged, 'file is', 'files are')
+      + ' unchanged: same name, same checksum. The full list is in comparison.csv.';
+    byId('cmpLimits').textContent = view.limits;
+    byId('cmpSearch').value = '';
+    renderSearch(null);
+    byId('cmpResults').hidden = false;
+  }
+
+  function groupSection(group) {
+    const section = el('section', 'block-top cmp-group');
+    section.dataset.group = group.key;
+    section.append(el('h2', 'serif', group.title + ' · ' + group.total.toLocaleString('en-GB')),
+                   el('p', 'muted', group.explain), listTable(group.rows, false));
+    if (group.total > group.rows.length) {
+      section.append(el('p', 'small muted', 'Showing the first ' + group.rows.length.toLocaleString('en-GB') + ' of '
+        + group.total.toLocaleString('en-GB') + '. The full list is in comparison.csv.'));
+    }
+    return section;
+  }
+
+  function listTable(rows, withGroup) {
+    const box = el('div', 'table-box');
+    const table = el('table', 'findings cmp-table');
+    const head = el('tr');
+    (withGroup ? ['Group', 'Earlier name', 'Later name', 'Note'] : ['Earlier name', 'Later name', 'Note']).forEach((h) => {
+      const th = el('th', null, h);
+      th.scope = 'col';
+      head.append(th);
+    });
+    const thead = el('thead');
+    thead.append(head);
+    const body = el('tbody');
+    rows.forEach((row) => {
+      const tr = el('tr');
+      if (withGroup) { tr.append(el('td', null, row.group)); }
+      tr.append(el('td', 'file', row.earlier || '–'), el('td', 'file', row.later || '–'), el('td', 'detail', row.note));
+      body.append(tr);
+    });
+    table.append(thead, body);
+    box.append(table);
+    return box;
+  }
+
+  async function searchComparison() {
+    const text = byId('cmpSearch').value;
+    const number = ++cmp.searchNumber;                   // only the newest search is shown
+    if (!text.trim() || !cmp.view) { renderSearch(null); return; }
+    const found = await api().search_comparison(cmp.view.compare_id, text);
+    if (number !== cmp.searchNumber) { return; }
+    if (!found.ok) { renderSearch(null); toast(found.error); return; }
+    renderSearch(found);
+  }
+
+  function renderSearch(found) {
+    const box = byId('cmpSearchBox');
+    if (!found) {
+      box.hidden = true;
+      box.replaceChildren();
+      byId('cmpSearchCount').textContent = '';
+      return;
+    }
+    let count = 'No file in either list matches that.';
+    if (found.total) {
+      count = plural(found.total, 'file', 'files') + ' found'
+        + (found.total > found.rows.length ? ', showing the first ' + found.rows.length.toLocaleString('en-GB') : '') + '.';
+    }
+    byId('cmpSearchCount').textContent = count;
+    box.replaceChildren(listTable(found.rows, true));
+    box.hidden = !found.total;
+  }
+
+  function compareAgain() {
+    cmp.earlier = null;
+    cmp.later = null;
+    cmp.view = null;
+    byId('cmpResults').hidden = true;
+    byId('compareError').textContent = '';
+    renderListCards();
+  }
+
   function init() {
     document.querySelectorAll('.nav-link').forEach((b) => b.addEventListener('click', () => show(b.dataset.screen)));
     byId('chooseFolder').addEventListener('click', async () => accept('folder', await api().choose_folder()));
@@ -668,6 +813,20 @@
     byId('ncSettings').addEventListener('click', () => show('settings'));
     watchDragging(byId('folderCard'));
     watchDragging(byId('manifestCard'));
+    byId('chooseEarlier').addEventListener('click', async () => acceptList('earlier', await api().choose_manifest()));
+    byId('changeEarlier').addEventListener('click', async () => acceptList('earlier', await api().choose_manifest()));
+    byId('chooseLater').addEventListener('click', async () => acceptList('later', await api().choose_manifest()));
+    byId('changeLater').addEventListener('click', async () => acceptList('later', await api().choose_manifest()));
+    byId('compareButton').addEventListener('click', compareLists);
+    byId('cmpSearch').addEventListener('input', searchComparison);
+    byId('cmpShowFolder').addEventListener('click', async () => {
+      const opened = await api().show_comparison_folder(cmp.view.compare_id);
+      if (!opened.ok) { toast(opened.error); }
+    });
+    byId('cmpAgain').addEventListener('click', compareAgain);
+    watchDragging(byId('earlierCard'));
+    watchDragging(byId('laterCard'));
+    renderListCards();
 
     byId('modeStandard').addEventListener('click', () => setMode('standard'));
     byId('modeAdvanced').addEventListener('click', () => setMode('advanced'));
@@ -688,6 +847,9 @@
   }
 
   // Called by Python after something is dropped on a card (only Python learns the real location).
-  window.app = { dropped: accept, show: show, state: state, loadChecks: loadChecks };
+  window.app = {
+    dropped: (kind, info) => (kind === 'earlier' || kind === 'later' ? acceptList(kind, info) : accept(kind, info)),
+    show: show, state: state, loadChecks: loadChecks,
+  };
   window.addEventListener('pywebviewready', init);
 })();
