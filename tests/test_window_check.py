@@ -98,3 +98,19 @@ def test_searching_and_reopening_an_earlier_check(shown):
     assert shown["reopened_headline"] == "2 files didn't arrive as expected."
     assert shown["reopened_note_button"] == "Start incident note"
     assert shown["reopened_details_hidden"] is True        # no live tool messages for an earlier check
+
+
+def test_what_the_check_proves_is_shown_in_manifest_doctors_own_words(shown):
+    assert shown["rs_proves_shown"] is True
+    assert shown["rs_proved"] == ("4 of the 5 files listed in the manifest were read in full and their MD5 "
+                                  "checksums compared: 3 matched and 1 didn't.")
+    assert shown["rs_not_checked_shown"] is True
+    assert shown["rs_not_checked"] == ["1 listed file wasn't found, so it couldn't be compared."]
+    assert shown["rs_cant_tell"].startswith("This shows the files match the manifest today.")
+    assert shown["ac_proves_shown"] is True and shown["ac_not_checked_hidden"] is True
+    assert shown["ac_proved"] == ("All 4 files listed in the manifest were found and read in full, "
+                                  "and every MD5 checksum matched.")
+
+
+def test_a_report_from_before_it_existed_shows_no_proves_panel(shown):
+    assert shown["old_report_opened"] is True and shown["old_report_proves_hidden"] is True

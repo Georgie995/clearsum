@@ -75,3 +75,24 @@ def test_file_names_pass_through_as_plain_data(tmp_path):
     name = '<img src=x onerror="alert(1)">.mov'
     view = results.summarise(write_report(tmp_path / "report-1", "PROBLEMS FOUND", [finding("MISSING", name)]))
     assert view["findings"][0]["path"] == name
+
+
+# --- What this check proves: manifest-doctor's own approved words, shown as they are -----------------
+
+PROVES = {"proved": "3 of the 4 files listed in the manifest were read in full and their MD5 checksums compared: "
+                    "2 matched and 1 didn't.",
+          "not_checked": ["1 listed file wasn't found, so it couldn't be compared."],
+          "cannot_tell": "This shows the files match the manifest today. It can't tell you whether the manifest "
+                         "itself was right, or catch changes made after this check."}
+
+
+def test_what_the_check_proves_comes_through_word_for_word(tmp_path):
+    folder = write_report(tmp_path / "report-1", "PROBLEMS FOUND", [finding("MISSING", "ShowA/clip_0004.mov")])
+    report = json.loads((folder / "report.json").read_text(encoding="utf-8"))
+    report["header"]["coverage"] = {"listed": 4, "read": 3, **PROVES}
+    (folder / "report.json").write_text(json.dumps(report), encoding="utf-8")
+    assert results.summarise(folder)["proves"] == PROVES
+
+
+def test_reports_from_before_it_existed_simply_show_nothing_about_it(tmp_path):
+    assert results.summarise(write_report(tmp_path / "report-1", "CLEAN"))["proves"] is None

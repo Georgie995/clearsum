@@ -318,3 +318,17 @@ Each entry records the decision, the alternatives considered and why this one wa
   - **26 new tests:** 139 in total.
   - **The real window, with a stand-in engine that gets stuck.** The time limit is cut to 3 seconds in that test only. The test also checks that a file name looking like web page code is shown as plain text.
   - **9 protections broken on purpose,** and a test caught each one.
+
+## 2026-10-14: The result screens say what the check proved
+
+- **Need:** Georgi's honest-labelling principle. "All clear" or "Problems found" doesn't say how much was examined, or what a checksum check can't tell you.
+- **Decision:** manifest-doctor now writes these sentences into every report (its DECISIONS, 2026-10-14). The app shows them word for word, in a "What this check proves" panel:
+  - **on All clear:** under "What was checked";
+  - **on Problems found:** under "All findings".
+
+  The "Not checked" list only appears when something wasn't checked. Reports made before this change have no such sentences, so the panel simply isn't shown for them.
+- **Wording:** approved by Georgi, and written once in manifest-doctor, so the app and the report can never disagree.
+- **Tested by:**
+  - **4 new tests:** 143 in total.
+  - **Real checks in the real window:** the exact sentences for a delivery with problems and for a clean one, and no panel for an older report.
+  - **Breaking it on purpose:** 5 protections were broken one at a time, and a test caught each one.

@@ -160,6 +160,11 @@ h2, h3 { margin: 0; }
   background: var(--paper); color: var(--ink); font-family: var(--mono); font-size: 13.5px; }
 .field-row input[type="password"] { font-family: var(--sans); font-size: 14.5px; }
 .field.has-error input { border-color: var(--bad); background: var(--bad-wash); }
+.proves p { margin: 0 0 10px; max-width: 72ch; }
+.proves-label { font-weight: 600; }
+.proves-list { margin: 0 0 12px; padding-left: 20px; max-width: 72ch; }
+.proves-list li { margin: 4px 0; }
+.proves-limit { color: var(--ink-2); }
 .field-row-short { align-items: center; }
 .field-row-short input { flex: 0 0 5.5em; text-align: right; }
 .unit { font-size: 14.5px; color: var(--ink-2); }

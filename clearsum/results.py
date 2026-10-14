@@ -41,7 +41,16 @@ def summarise(folder):
         "findings_total": len(findings),
         "categories": titles.count_by_category(findings),
         "has_note": (folder / "incident-note.md").exists(),
+        "proves": _proves(header.get("coverage")),
     }
+
+
+def _proves(coverage):
+    """What the check proves, in manifest-doctor's own approved words. Older reports don't say: None."""
+    if not coverage:
+        return None
+    return {"proved": coverage.get("proved", ""), "not_checked": list(coverage.get("not_checked") or []),
+            "cannot_tell": coverage.get("cannot_tell", "")}
 
 
 def _headline(header, findings, entries):

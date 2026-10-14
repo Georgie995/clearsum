@@ -17,6 +17,7 @@ ClearSum is the desktop version of [delivery-desk](https://github.com/Georgie995
    - **All clear:** for example "All 1,204 files match the manifest".
    - **Problems found:** for example "2 files didn't arrive as expected", with **what probably happened** (labelled as hints, not verdicts) and every finding, filterable.
    - **"The check couldn't run":** with the reason, in the tools' own words.
+   - **What this check proves:** on both result screens, in plain sentences. They say how many listed files were read in full and matched, what wasn't checked and why, and what no checksum check can tell you.
 3. **Write it up.** Answer five short questions, one at a time:
    - when it happened;
    - how it happened;
@@ -85,7 +86,7 @@ ENGINE    my earlier tools, unchanged in what they decide:
   ```
 - **Run:** `.venv\Scripts\python -m clearsum`, or double-click `run-app.bat`.
 - **Test:** `.venv\Scripts\python -m pytest`.
-  - **139 tests,** including real checks driven through the real window. Window tests open the app for a few seconds.
+  - **143 tests,** including real checks driven through the real window. Window tests open the app for a few seconds.
   - **Skips:** tests that need the sibling repos or a built app are skipped when those are absent.
   - **Proven by breaking things on purpose:** every protection was broken one at a time, and a test failed each time.
 - **Build:** `.venv\Scripts\python packaging\build.py`. It writes the third-party notices, builds with PyInstaller, runs the packaged app's own self-test, and only then zips it.

@@ -220,7 +220,19 @@
       list.append(item);
     });
     alertLine('acAlert', view, status);
+    renderProves('ac', view.proves);
     show('allclear');
+  }
+
+  // What the check proves, in manifest-doctor's own approved words. Reports from before it existed
+  // don't say, so the panel stays hidden. Always shown as text.
+  function renderProves(prefix, proves) {
+    byId(prefix + 'Proves').hidden = !proves;
+    if (!proves) { return; }
+    byId(prefix + 'Proved').textContent = proves.proved;
+    byId(prefix + 'NotChecked').replaceChildren(...proves.not_checked.map((sentence) => el('li', null, sentence)));
+    byId(prefix + 'NotCheckedBlock').hidden = proves.not_checked.length === 0;
+    byId(prefix + 'CantTell').textContent = proves.cannot_tell;
   }
 
   function renderResults(view, status) {
@@ -253,6 +265,7 @@
     byId('rsOutput').textContent = (status.messages || []).join('\n');
     byId('rsDetails').open = false;
     byId('rsDetails').hidden = !(status.messages || []).length;
+    renderProves('rs', view.proves);
     show('results');
   }
 

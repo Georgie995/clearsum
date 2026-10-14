@@ -121,3 +121,20 @@ A plain-English explanation of each part, written for someone with no technical 
 **Tested by:**
 - **26 new automatic tests.** These include the real window with a pretend check that gets stuck, the warning appearing and clearing, and a file name that looks like web page code shown as plain text.
 - **9 protections broken on purpose,** and a test caught each one.
+
+## Module 7: what this check proves (added 2026-10-14)
+
+**In one sentence:** after every check, the result screen says in plain words how much was actually checked, what wasn't and why, and what no checksum check can tell you.
+
+**Like this:** the QC sheet that comes back with a tape. It says "PASS", but it also says "reels 1 to 4 played in full; reel 5 wouldn't load; this only proves the copy matches the master, not that the master was right".
+- **"All 4 files listed in the manifest were found and read in full, and every MD5 checksum matched."**
+- **A "Not checked" list:** files not found, files or folders that couldn't be opened, manifest lines that couldn't be read (a cut-off list shows up here), extra files, and system files set aside. Each line only appears when it applies.
+- **"What it can't tell you":** whether the manifest itself was right, or changes made after the check.
+
+**Under the hood, in plain words:**
+- **Who writes the sentences:** manifest-doctor writes them into the report, from what it actually did. The app just shows them, so the screen and the saved report always say the same thing.
+- **Older reports:** reports from before this change don't have the sentences, so the panel doesn't appear for them.
+
+**Tested by:**
+- **4 new tests in the app and 18 in manifest-doctor.** They include real checks in the real window.
+- **Protections broken on purpose:** every one was caught.

@@ -212,6 +212,15 @@
         <h2 class="serif">What was checked</h2>
         <ul class="checked-list" id="acChecked"></ul>
       </section>
+      <section class="block-top proves" id="acProves" aria-labelledby="acProvesTitle" hidden>
+        <h2 class="serif" id="acProvesTitle">What this check proves</h2>
+        <p id="acProved"></p>
+        <div id="acNotCheckedBlock" hidden>
+          <p class="proves-label">Not checked:</p>
+          <ul class="proves-list" id="acNotChecked"></ul>
+        </div>
+        <p class="proves-limit"><span class="proves-label">What it can't tell you:</span> <span id="acCantTell"></span></p>
+      </section>
     </div>
   </section>
 
@@ -262,6 +271,15 @@
         </div>
         <p class="small muted" id="rsCap"></p>
         <p class="small muted">File names are shown exactly as found on disk.</p>
+      </section>
+      <section class="block-top proves" id="rsProves" aria-labelledby="rsProvesTitle" hidden>
+        <h2 class="serif" id="rsProvesTitle">What this check proves</h2>
+        <p id="rsProved"></p>
+        <div id="rsNotCheckedBlock" hidden>
+          <p class="proves-label">Not checked:</p>
+          <ul class="proves-list" id="rsNotChecked"></ul>
+        </div>
+        <p class="proves-limit"><span class="proves-label">What it can't tell you:</span> <span id="rsCantTell"></span></p>
       </section>
       <details class="details" id="rsDetails">
         <summary>Show what the tools said</summary>
