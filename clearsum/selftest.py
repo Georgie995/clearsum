@@ -1,8 +1,9 @@
 """A self-test for the packaged app: `ClearSum.exe --self-test result.json`.
 
 Opens the window for a few seconds and checks the page and fonts, runs a real check of a tiny
-made-up delivery (through "tool mode"), and checks Windows Credential Manager is reachable,
-without saving anything there. Writes what it found to the given file, then closes.
+made-up delivery (through "tool mode") and a comparison of two tiny made-up lists (inside the app),
+and checks Windows Credential Manager is reachable, without saving anything there. Writes what it
+found to the given file, then closes.
 """
 
 import hashlib
@@ -76,6 +77,18 @@ def run(out):
         outcome = status.get("outcome") or {}
         result["headline"] = bridge.get_result(outcome["report_id"]).get("headline") if outcome.get("report_id") else None
         result["note_written"] = outcome.get("has_note")
+        view = bridge.get_result(outcome["report_id"]) if outcome.get("report_id") else {}
+        result["proved"] = (view.get("proves") or {}).get("proved")
+        # Compare lists runs manifest-doctor's comparison inside the app, so prove it loads when packaged.
+        earlier, later = work / "v1.md5", work / "v2.md5"
+        earlier.write_text(manifest.read_text(encoding="utf-8"), encoding="utf-8")
+        later_files = {**files, "ShowA/clip_0002.mov": b"frames two, changed"}
+        later.write_text("".join(f"{hashlib.md5(d).hexdigest()}  {r}\n" for r, d in later_files.items()),
+                         encoding="utf-8")
+        compared = bridge.compare_lists(str(earlier), str(later))
+        result["compare_result"] = compared.get("result") or compared.get("error")
+        result["compare_changed"] = (compared.get("counts") or {}).get("changed")
+        result["stall_minutes"] = bridge.get_settings()["values"]["stall_minutes"]
         Path(out).write_text(json.dumps(result, ensure_ascii=False, indent=1), encoding="utf-8")
         window.destroy()
 

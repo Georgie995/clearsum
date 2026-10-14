@@ -59,6 +59,11 @@ def test_the_built_app_passes_its_own_self_test(tmp_path):
     assert result["heading"] == "Check a delivery"
     assert (result["check_state"], result["tool_messages_seen"], result["note_written"]) == ("finished", True, True)
     assert result["headline"] == "1 file didn't arrive as expected."
+    # v0.2.0's additions, proven inside the packaged app too:
+    assert result["proved"] == ("All 2 files listed in the manifest were found and read in full, and their MD5 "
+                                "checksums compared: 1 matched and 1 didn't.")
+    assert (result["compare_result"], result["compare_changed"]) == ("THE LISTS DIFFER", 1)   # runs inside the app
+    assert result["stall_minutes"] == 10
 
 
 @pytest.mark.skipif(not BUILT.exists(), reason="the app hasn't been built (packaging/build.py)")

@@ -43,7 +43,7 @@ ClearSum is the desktop version of [delivery-desk](https://github.com/Georgie995
 
 ## Getting it (Windows)
 
-1. Download `ClearSum-0.1.0-windows.zip` from this repository's **Releases**, and unzip it anywhere.
+1. Download `ClearSum-0.2.0-windows.zip` from this repository's **Releases**, and unzip it anywhere.
 2. Double-click **`ClearSum.exe`** in the unzipped folder. Nothing else needs installing.
 
 **"Windows protected your PC"**: this blue warning appears the first time, because the app isn't digitally signed (a signing certificate is a paid service). Choose **More info → Run anyway**. If you'd rather not, run it from source instead (below).
