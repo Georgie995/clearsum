@@ -170,6 +170,7 @@
           <span class="small muted" id="nowLabel">Reading now</span>
           <span class="mono" id="nowFile">…</span>
         </div>
+        <p class="banner-warning" id="stallWarning" role="status" hidden></p>
       </section>
       <ol class="stages">
         <li class="stage" id="stage-preparing"><span class="stage-mark">1</span><span class="stage-text"><span class="stage-title">Reading the manifest and the folder</span><span class="stage-detail">Which files should be there, and which are.</span></span></li>
@@ -465,6 +466,18 @@
               <div class="field-row"><input type="text" id="f-reports_dir" spellcheck="false"><button type="button" class="button small-button" data-browse="reports_dir" data-kind="folder">Browse…</button></div>
               <span class="help">Every check's report, working note and email are kept here. While alerts are set up, the reports folder in delivery-ops-hub's settings is used instead.</span>
               <span class="field-error" id="e-reports_dir"></span>
+            </div>
+          </div>
+        </section>
+
+        <section class="block">
+          <h2 class="serif">Checking</h2>
+          <div class="panel">
+            <div class="field" data-field="stall_minutes">
+              <label for="f-stall_minutes">Warn when nothing has been read for</label>
+              <div class="field-row field-row-short"><input type="text" id="f-stall_minutes" inputmode="numeric" spellcheck="false" maxlength="3"><span class="unit">minutes</span></div>
+              <span class="help">If the drive or network stops responding during a check, ClearSum says so after this long. Whole minutes from 1 to 240; 10 unless you change it.</span>
+              <span class="field-error" id="e-stall_minutes"></span>
             </div>
           </div>
         </section>

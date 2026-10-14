@@ -297,3 +297,24 @@ Each entry records the decision, the alternatives considered and why this one wa
   - those folders are worked out at run time, so no personal path is written into the repository;
   - **the build refuses to zip if any trace is found.**
 - **Not a concern:** the "gmail" addresses inside third-party libraries' metadata and Python itself belong to their own maintainers.
+
+## 2026-10-14: A warning when a check seems stuck
+
+- **Need, from Georgi's own experience:**
+  - copies that stall on bad sections of tape;
+  - checks on network storage that simply stop, with nothing to say why or where.
+
+  His job-watch project already reports a stalled job after 10 minutes without progress.
+- **Decision (Georgi):** the same rule here. The warning comes after 10 minutes without progress by default, changeable in Settings → Advanced, in whole minutes from 1 to 240. Older settings files without this setting use 10.
+- **What counts as progress:** any change in the data read, the files done, or the file being read.
+  - A huge file that is still being read is never called stuck.
+  - While the folder is still being listed, there's no progress signal at all, so slow and stuck look the same and no warning is shown.
+- **What it does:** names the file, says the storage may be stuck and that stopping is safe, and clears by itself when reading resumes. It doesn't stop the check, send an alert or change the report.
+- **Naming the right file:**
+  - **The problem:** manifest-doctor writes its progress file at most about four times a second. A check stuck the instant a new file started could leave the previous file's name showing.
+  - **The options:** change this app's wording to "the last file it reported", or make manifest-doctor write the held-back update a moment later.
+  - **Georgi chose the second,** because the point is to say *which* file (see manifest-doctor's DECISIONS).
+- **Tested by:**
+  - **26 new tests:** 139 in total.
+  - **The real window, with a stand-in engine that gets stuck.** The time limit is cut to 3 seconds in that test only. The test also checks that a file name looking like web page code is shown as plain text.
+  - **9 protections broken on purpose,** and a test caught each one.

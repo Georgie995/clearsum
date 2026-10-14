@@ -214,3 +214,11 @@ def test_the_status_says_whether_alerts_were_on_for_this_check(tmp_path, checker
     checker.save_settings({"reports_dir": str(checker.reports), "ops_hub_path": str(hub[0]), "ops_hub_config": str(hub[1])})
     checker.start_check(str(tree), str(manifest))
     assert wait_done(checker)["alerts"] is True
+
+
+def test_each_check_uses_the_stuck_warning_time_from_settings(tmp_path, checker):
+    checker.save_settings({"reports_dir": str(checker.reports), "stall_minutes": "3"})
+    tree, manifest = delivery(tmp_path)
+    checker.start_check(str(tree), str(manifest))
+    assert checker._run._stall_seconds == 180
+    assert "stalled" in wait_done(checker)

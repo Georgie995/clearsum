@@ -1,4 +1,4 @@
-"""ClearSum's own settings: where things live on this computer.
+"""ClearSum's own settings: where things live on this computer, and when to warn about a stuck check.
 
 Never secrets: those are kept in Windows Credential Manager (secret_store.py). Unknown fields are
 refused, so a secret can't end up in this file by accident.
@@ -9,7 +9,12 @@ import os
 import tomllib
 from pathlib import Path
 
-FIELDS = ("reports_dir", "ops_hub_path", "ops_hub_config", "ai_triage_path", "ai_triage_python")
+PATH_FIELDS = ("reports_dir", "ops_hub_path", "ops_hub_config", "ai_triage_path", "ai_triage_python")
+FIELDS = PATH_FIELDS + ("stall_minutes",)
+
+# The stuck warning (checking.py) uses Georgi's job-watch rule: 10 minutes without progress, changeable here.
+STALL_MINUTES_DEFAULT = 10
+STALL_MINUTES_RANGE = (1, 240)
 
 
 class SettingsError(Exception):
@@ -53,7 +58,8 @@ def validate(values):
     unknown = sorted(set(values) - set(FIELDS))
     if unknown:
         raise SettingsError(unknown[0], f"unknown setting: {unknown[0]}")
-    clean = {key: (str(values.get(key) or "").strip() or None) for key in FIELDS}
+    clean = {key: (str(values.get(key) or "").strip() or None) for key in PATH_FIELDS}
+    clean["stall_minutes"] = _minutes(values.get("stall_minutes"))
 
     if not clean["reports_dir"]:
         raise SettingsError("reports_dir", "Choose a reports folder: every check's report is kept there.")
@@ -79,6 +85,18 @@ def reports_folder(settings):
     if settings["ops_hub_path"]:
         return str(Path(_hub_reports_dir(settings["ops_hub_config"])))
     return settings["reports_dir"]
+
+
+def _minutes(value):
+    """Whole minutes from 1 to 240. Left empty, or missing from an older settings file: the default."""
+    if value is None or (isinstance(value, str) and not value.strip()):
+        return STALL_MINUTES_DEFAULT
+    low, high = STALL_MINUTES_RANGE
+    if isinstance(value, str) and value.strip().isascii() and value.strip().isdigit():
+        value = int(value.strip())
+    if isinstance(value, bool) or not isinstance(value, int) or not low <= value <= high:
+        raise SettingsError("stall_minutes", f"Enter whole minutes from {low} to {high}.")
+    return value
 
 
 def _pair(clean, first, second, what):

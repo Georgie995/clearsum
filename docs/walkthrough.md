@@ -103,3 +103,21 @@ A plain-English explanation of each part, written for someone with no technical 
 **Under the hood, in plain words:** there's no database. The app simply looks in the reports folder each time, because every check already left its report, note and email there. That means the list can never disagree with the files.
 
 **Tested by:** 105 automatic tests. That includes the real window listing real checks, searching, reopening one, and an odd delivery name that looks like web page code, which is shown as plain text. Six protections were broken on purpose, and a test caught each one.
+
+## Module 6: the stuck warning (added 2026-10-14)
+
+**In one sentence:** if a check stops reading for 10 minutes, the app says so, names the file it's stuck on, and tells you that stopping is safe.
+
+**Like this:** a tape deck that has gone quiet. Rather than leaving you to wonder whether it's slow or jammed, someone puts a note on it: "nothing has played for 10 minutes, this reel".
+- **Any movement resets the clock:** more data read, another file finished, or a new file started. So a huge file that is still being read is never called stuck.
+- **No warning while the folder is still being listed:** there's no progress signal then, so slow and stuck would look the same.
+- **The note disappears by itself** as soon as reading starts again.
+- **You can change the 10 minutes** in Settings → Advanced, to anything from 1 to 240.
+
+**Under the hood, in plain words:**
+- **How the app knows:** it already reads the progress file a few times a second for the progress bar. Now it also remembers when the numbers last moved.
+- **Naming the right file:** manifest-doctor saves its progress at most about four times a second. If a check got stuck the very moment a new file started, the newest update could be held back. Now a held-back update is still written a quarter of a second later, so the name is always the right file.
+
+**Tested by:**
+- **26 new automatic tests.** These include the real window with a pretend check that gets stuck, the warning appearing and clearing, and a file name that looks like web page code shown as plain text.
+- **9 protections broken on purpose,** and a test caught each one.

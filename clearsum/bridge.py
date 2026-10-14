@@ -77,7 +77,7 @@ class Bridge:
         def call(output, stop):
             return engine.check(settings, folder, args, secrets=secrets, output=output, stop=stop)
 
-        self._run = CheckRun(call, progress)
+        self._run = CheckRun(call, progress, stall_seconds=values["stall_minutes"] * 60)
         self._alerts = bool(settings["ops_hub_path"])
         self._run.start()
         return {"ok": True}

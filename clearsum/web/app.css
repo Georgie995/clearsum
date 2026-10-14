@@ -160,6 +160,9 @@ h2, h3 { margin: 0; }
   background: var(--paper); color: var(--ink); font-family: var(--mono); font-size: 13.5px; }
 .field-row input[type="password"] { font-family: var(--sans); font-size: 14.5px; }
 .field.has-error input { border-color: var(--bad); background: var(--bad-wash); }
+.field-row-short { align-items: center; }
+.field-row-short input { flex: 0 0 5.5em; text-align: right; }
+.unit { font-size: 14.5px; color: var(--ink-2); }
 .help { font-size: 13.5px; color: var(--muted); }
 .field-error { font-size: 13.5px; color: var(--bad); }
 .field-error:empty { display: none; }

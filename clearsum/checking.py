@@ -1,7 +1,8 @@
 """A check running in the background, so the window never freezes while files are read.
 
 The engine (delivery-desk) does the work; this keeps hold of it, reads manifest-doctor's progress
-file for the progress bar, works out the time left, collects messages, and passes on Stop.
+file for the progress bar, works out the time left, warns if reading seems stuck, collects messages,
+and passes on Stop.
 """
 
 import json
@@ -13,10 +14,13 @@ MAX_MESSAGES = 500
 
 
 class CheckRun:
-    def __init__(self, engine_call, progress_path, clock=time.monotonic):
+    def __init__(self, engine_call, progress_path, clock=time.monotonic, stall_seconds=600):
         self._engine_call = engine_call          # engine_call(output, stop) -> the engine's Outcome
         self._progress_path = Path(progress_path)
         self._clock = clock
+        self._stall_seconds = stall_seconds      # from Settings; Georgi's job-watch rule is 10 minutes
+        self._seen = None                        # the last reading progress seen, and when it changed
+        self._seen_at = None
         self._stop = threading.Event()
         self._messages = []
         self._lock = threading.Lock()
@@ -45,8 +49,8 @@ class CheckRun:
         with self._lock:
             messages = list(self._messages)
         return {"state": self._state, "progress": progress, "elapsed_seconds": round(elapsed),
-                "eta_seconds": self._eta(progress, elapsed), "messages": messages,
-                "outcome": self._outcome_view(), "error": self._error}
+                "eta_seconds": self._eta(progress, elapsed), "stalled": self._stalled(progress, now),
+                "messages": messages, "outcome": self._outcome_view(), "error": self._error}
 
     def _work(self):
         state, outcome, error = "failed", None, None
@@ -90,6 +94,24 @@ class CheckRun:
         if progress.get("stage") != "hashing" or done <= 0 or total <= done or elapsed < 1:
             return None
         return round((total - done) / (done / elapsed))
+
+    def _stalled(self, progress, now):
+        """The stuck warning: nothing has moved for stall_seconds while files are being read.
+        Any change counts as moving: more data read, another file done, or a new file started, so a
+        huge file that is still being read is never called stuck. While the folder is being listed
+        there's no progress signal at all, so slow and stuck look the same: no warning then."""
+        if self._state != "running":
+            return None
+        if progress:                                    # an unreadable moment changes nothing
+            if progress.get("stage") != "hashing":
+                self._seen = self._seen_at = None
+                return None
+            moved = (progress.get("bytes_done"), progress.get("files_done"), progress.get("current_file"))
+            if moved != self._seen:
+                self._seen, self._seen_at = moved, now
+        if self._seen_at is None or now - self._seen_at < self._stall_seconds:
+            return None
+        return {"file": self._seen[2], "minutes": int((now - self._seen_at) // 60)}
 
     def _outcome_view(self):
         o = self._outcome

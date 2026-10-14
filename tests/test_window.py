@@ -53,3 +53,9 @@ def test_a_saved_secret_goes_to_the_safe_and_disappears_from_the_page(shown):
 def test_the_bundled_fonts_load_from_the_app_itself(shown):
     assert shown["fonts_loaded"] == ["IBM Plex Mono", "Instrument Sans", "Newsreader"]
 
+
+
+def test_the_stuck_warning_time_starts_at_10_refuses_0_and_saves_15(shown):
+    assert shown["stall_minutes_shown"] == "10"
+    assert shown["stall_error"] == "Enter whole minutes from 1 to 240."
+    assert shown["stall_error_after_fix"] == "" and shown["stall_minutes_saved"] == 15

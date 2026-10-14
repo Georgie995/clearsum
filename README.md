@@ -12,7 +12,7 @@ ClearSum is the desktop version of [delivery-desk](https://github.com/Georgie995
 
 ## What it does
 
-1. **Check.** Drop in, or choose, the delivery folder and its manifest. Every file is compared with its line in the manifest, with real progress and time left. **Stop** is always safe, because checking only reads files.
+1. **Check.** Drop in, or choose, the delivery folder and its manifest. Every file is compared with its line in the manifest, with real progress and time left. If nothing has been read for 10 minutes (changeable in Settings → Advanced), a warning names the file it's stuck on, in case a drive or network connection has stopped responding. **Stop** is always safe, because checking only reads files.
 2. **Read the result**, in plain words:
    - **All clear:** for example "All 1,204 files match the manifest".
    - **Problems found:** for example "2 files didn't arrive as expected", with **what probably happened** (labelled as hints, not verdicts) and every finding, filterable.
@@ -85,7 +85,7 @@ ENGINE    my earlier tools, unchanged in what they decide:
   ```
 - **Run:** `.venv\Scripts\python -m clearsum`, or double-click `run-app.bat`.
 - **Test:** `.venv\Scripts\python -m pytest`.
-  - **113 tests,** including real checks driven through the real window. Window tests open the app for a few seconds.
+  - **139 tests,** including real checks driven through the real window. Window tests open the app for a few seconds.
   - **Skips:** tests that need the sibling repos or a built app are skipped when those are absent.
   - **Proven by breaking things on purpose:** every protection was broken one at a time, and a test failed each time.
 - **Build:** `.venv\Scripts\python packaging\build.py`. It writes the third-party notices, builds with PyInstaller, runs the packaged app's own self-test, and only then zips it.
@@ -96,7 +96,7 @@ ENGINE    my earlier tools, unchanged in what they decide:
 - **Unsigned:** Windows shows the warning described above.
 - **The bundled tools are fixed at build time:** the packaged app carries the versions of manifest-doctor, delivery-desk and delivery-ops-hub it was built with.
 - **Alerts waiting in delivery-ops-hub's outbox** (when n8n was unreachable) are resent with delivery-ops-hub's own `resend` command, not from this app.
-- **The Stop button isn't tested inside the window,** because a tiny test delivery finishes too fast to stop. Stopping is tested in the engine, including ending a tool and the program it started.
+- **Stop is tested inside the window only with a stand-in engine,** because a tiny real test delivery finishes too fast to stop. Ending a real tool, and the program it started, is tested in the engine.
 - **Earlier checks lists the newest 200 checks;** the total is shown.
 
 ## Why not just…

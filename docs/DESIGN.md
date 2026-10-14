@@ -76,12 +76,12 @@ This app is for **"anyone who might need to use it but isn't comfortable with th
 | Screen | What the app does underneath |
 |---|---|
 | **Start** | Drop or choose a folder and a manifest. pywebview gives their real locations. The cards show the name, location and file count (the "Added" state from the prototype). |
-| **Checking** | Runs the check in the background, so the window never freezes. Reads the progress file a few times a second to drive the bar, the counts, the current file and the time left. **Stop checking** ends the check program; nothing is changed, because checking is read-only. |
+| **Checking** | Runs the check in the background, so the window never freezes. Reads the progress file a few times a second to drive the bar, the counts, the current file and the time left. If nothing has moved for the time set in Settings (10 minutes unless changed), a warning names the file and says stopping is safe; it clears when reading resumes. **Stop checking** ends the check program; nothing is changed, because checking is read-only. |
 | **All clear / Problems found** | Reads `report.json`. Friendly titles come from a wording table in the app, and unknown codes are shown as the code itself. Probable causes are labelled "hints, not verdicts". **Show report in folder** opens File Explorer. |
 | **Incident note** | One question at a time. Each answer is saved straight into `incident-note.md` using delivery-desk's own tested code (only empty sections are filled, and it never overwrites). The private part is shown, but never put in the email. |
 | **Email ready** | delivery-desk writes `manager-email.txt` (never overwritten, `-2` next time). **Copy email** puts it on the clipboard. **Open in mail app** opens a new draft in the default mail app. The app never sends anything. |
 | **Earlier checks / Recent** | Reads the reports folder: each `report-*` folder, with its result, note progress (e.g. "3 of 5 answered") and whether an email exists. There's no database, so it can't drift from the files. |
-| **Settings** | Locations and secrets, as in the prototype (version 16). Settings live in a small file in the user's app-data folder; **secrets never go there**. |
+| **Settings** | Locations and secrets, as in the prototype (version 16), plus the stuck-warning time (added 2026-10-14). Settings live in a small file in the user's app-data folder; **secrets never go there**. |
 
 ## 6. Safety rules
 

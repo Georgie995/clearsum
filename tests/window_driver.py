@@ -69,6 +69,19 @@ def drive(window, bridge, keyring, out):
     r["secret_saved_shown"] = not js("document.getElementById('webhook_secret-saved').hidden")
     r["secret_in_page"] = SECRET in js("document.documentElement.outerHTML + document.body.innerText")
     r["secret_in_store"] = keyring.saved.get(("ClearSum", "webhook_secret")) == SECRET
+
+    # The stuck warning's time: 10 until changed; a wrong value is pointed at; a right one is saved.
+    r["stall_minutes_shown"] = js("document.getElementById('f-stall_minutes').value")
+    window.run_js("document.getElementById('f-ops_hub_path').value = '';"
+                  "document.getElementById('f-stall_minutes').value = '0';"
+                  "document.getElementById('saveSettings').click();")
+    time.sleep(1.5)
+    r["stall_error"] = js("document.getElementById('e-stall_minutes').textContent")
+    window.run_js("document.getElementById('f-stall_minutes').value = '15';"
+                  "document.getElementById('saveSettings').click();")
+    time.sleep(1.5)
+    r["stall_error_after_fix"] = js("document.getElementById('e-stall_minutes').textContent")
+    r["stall_minutes_saved"] = json.loads(Path(bridge._settings_file).read_text(encoding="utf-8"))["stall_minutes"]
     r["fonts_loaded"] = sorted(set(js("Array.from(document.fonts).filter(f => f.status === 'loaded').map(f => f.family.replace(/\"/g, ''))")))
     Path(out).write_text(json.dumps(r, ensure_ascii=False, indent=1), encoding="utf-8")
     window.destroy()

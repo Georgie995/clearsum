@@ -76,3 +76,30 @@ def test_a_damaged_settings_file_is_reported_not_silently_replaced(tmp_path):
 
 def test_settings_live_in_the_apps_own_folder_named_after_it():
     assert store.default_settings_file().parent.name == "ClearSum"
+
+
+# --- The stuck warning's time limit (Georgi: 10 minutes, as in job-watch, changeable here) -----------
+
+def test_the_stuck_warning_time_is_ten_minutes_unless_changed(tmp_path):
+    assert store.load(tmp_path / "settings.json")["stall_minutes"] == 10
+    assert store.validate({"reports_dir": "D:/R"})["stall_minutes"] == 10                      # older settings files
+    assert store.validate({"reports_dir": "D:/R", "stall_minutes": " "})["stall_minutes"] == 10  # box left empty
+
+
+@pytest.mark.parametrize("given, kept", [("15", 15), (" 1 ", 1), (240, 240), ("240", 240)])
+def test_the_stuck_warning_time_takes_whole_minutes_from_1_to_240(given, kept):
+    assert store.validate({"reports_dir": "D:/R", "stall_minutes": given})["stall_minutes"] == kept
+
+
+@pytest.mark.parametrize("given", ["0", "241", "-5", "2.5", "ten", True, 2.5])
+def test_any_other_stuck_warning_time_is_refused_in_plain_words(given):
+    with pytest.raises(SettingsError, match="whole minutes from 1 to 240") as error:
+        store.validate({"reports_dir": "D:/R", "stall_minutes": given})
+    assert error.value.field == "stall_minutes"
+
+
+def test_the_stuck_warning_time_is_saved_and_comes_back(tmp_path):
+    path = tmp_path / "settings.json"
+    store.save(path, {"reports_dir": str(tmp_path / "r"), "stall_minutes": "25"})
+    assert store.load(path)["stall_minutes"] == 25
+    assert json.loads(path.read_text(encoding="utf-8"))["stall_minutes"] == 25

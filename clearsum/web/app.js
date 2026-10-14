@@ -16,7 +16,7 @@
     if (text !== undefined && text !== null) { node.textContent = text; }
     return node;
   }
-  const FIELDS = ['reports_dir', 'ops_hub_path', 'ops_hub_config', 'ai_triage_path', 'ai_triage_python'];
+  const FIELDS = ['reports_dir', 'ops_hub_path', 'ops_hub_config', 'ai_triage_path', 'ai_triage_python', 'stall_minutes'];
   const SECRETS = ['webhook_secret', 'ai_key'];
 
   // --- Navigation -----------------------------------------------------------------------------------
@@ -149,6 +149,7 @@
     byId('checkCounts').textContent = stage === 'preparing'
       ? 'Getting ready…' : done.toLocaleString('en-GB') + ' of ' + plural(total, 'file', 'files') + ' · ' + timeLeft(status.eta_seconds);
     byId('nowFile').textContent = p.current_file || '…';
+    renderStall(status.stalled);
     const comparing = stage === 'finished' || (stage === 'hashing' && total > 0 && done >= total);
     const order = ['preparing', 'hashing', 'comparing'];
     const active = comparing ? 'comparing' : stage;
@@ -158,6 +159,19 @@
       item.classList.toggle('is-active', i === activeIndex);
       item.classList.toggle('is-done', i < activeIndex);
     });
+  }
+
+  // The stuck warning: shown while nothing has been read for the time set in Settings, gone once
+  // reading resumes. The file name is a delivery's own text, so it only ever goes in as text.
+  function renderStall(stalled) {
+    const box = byId('stallWarning');
+    box.hidden = !stalled;
+    if (!stalled) { box.replaceChildren(); return; }
+    const parts = [document.createTextNode('Nothing has been read')];
+    if (stalled.file) { parts.push(document.createTextNode(' from '), el('span', 'mono', stalled.file)); }
+    parts.push(document.createTextNode(' for ' + plural(stalled.minutes, 'minute', 'minutes') + '. The storage may be stuck: '
+      + 'check the drive or network connection. Stopping is safe; nothing has been changed.'));
+    box.replaceChildren(...parts);
   }
 
   async function stopCheck() {
@@ -578,7 +592,7 @@
     byId('advancedView').hidden = !advanced;
     byId('modeStandard').setAttribute('aria-pressed', String(!advanced));
     byId('modeAdvanced').setAttribute('aria-pressed', String(advanced));
-    byId('modeHint').textContent = advanced ? 'Where the connected tools live on this computer.' : 'Which tools ClearSum works with.';
+    byId('modeHint').textContent = advanced ? 'Where the connected tools live on this computer, and how checks behave.' : 'Which tools ClearSum works with.';
   }
 
   async function saveSettings() {

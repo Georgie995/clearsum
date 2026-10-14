@@ -135,3 +135,95 @@ def test_tidying_up_survives_the_screen_reading_the_progress_file_at_that_moment
     assert wait_until(run, {"finished"})["state"] == "finished"
     time.sleep(0.5)
     assert not progress.exists() and attempts["n"] >= 2
+
+
+# --- The "stuck" warning: nothing read for a while (Georgi's job-watch rule: 10 minutes) -------------
+
+def running(tmp_path, stall_seconds=600):
+    progress = tmp_path / "p.json"
+    clock = SimpleNamespace(now=0.0)
+    run = CheckRun(lambda output, stop: outcome(), progress, clock=lambda: clock.now, stall_seconds=stall_seconds)
+    run._started, run._state = 0.0, "running"
+    return run, progress, clock
+
+
+def reading(progress, **state):
+    progress.write_text(json.dumps({"stage": "hashing", **state}), encoding="utf-8")
+
+
+def test_after_ten_minutes_with_nothing_read_a_warning_names_the_file(tmp_path):
+    run, progress, clock = running(tmp_path)
+    reading(progress, bytes_done=500, files_done=3, current_file="Reel03/clip_0042.mov")
+    assert run.status()["stalled"] is None
+    clock.now = 599
+    assert run.status()["stalled"] is None
+    clock.now = 600
+    assert run.status()["stalled"] == {"file": "Reel03/clip_0042.mov", "minutes": 10}
+    clock.now = 750
+    assert run.status()["stalled"]["minutes"] == 12          # keeps counting while it's stuck
+
+
+def test_the_warning_clears_as_soon_as_reading_resumes(tmp_path):
+    run, progress, clock = running(tmp_path)
+    reading(progress, bytes_done=500, files_done=3, current_file="Reel03/clip_0042.mov")
+    run.status()
+    clock.now = 700
+    assert run.status()["stalled"] is not None
+    reading(progress, bytes_done=600, files_done=3, current_file="Reel03/clip_0042.mov")
+    assert run.status()["stalled"] is None
+
+
+def test_a_big_file_that_is_still_being_read_is_never_called_stuck(tmp_path):
+    run, progress, clock = running(tmp_path)
+    for minute in range(0, 60, 5):                           # an hour on one file, data still moving
+        clock.now = minute * 60
+        reading(progress, bytes_done=minute * 10**9, files_done=0, current_file="Reel01/huge.mxf")
+        assert run.status()["stalled"] is None
+
+
+def test_moving_on_to_another_file_counts_as_progress(tmp_path):
+    # e.g. empty files: no data is read, but files are still being dealt with
+    run, progress, clock = running(tmp_path)
+    reading(progress, bytes_done=0, files_done=1, current_file="a.txt")
+    run.status()
+    clock.now = 700
+    reading(progress, bytes_done=0, files_done=2, current_file="b.txt")
+    assert run.status()["stalled"] is None
+
+
+def test_no_warning_while_the_folder_is_still_being_listed(tmp_path):
+    # Listing gives no progress signal, so slow and stuck look the same there: no warning.
+    run, progress, clock = running(tmp_path)
+    progress.write_text(json.dumps({"stage": "preparing"}), encoding="utf-8")
+    run.status()
+    clock.now = 3600
+    assert run.status()["stalled"] is None
+
+
+def test_a_moment_when_the_progress_file_cant_be_read_doesnt_restart_the_count(tmp_path):
+    run, progress, clock = running(tmp_path)
+    reading(progress, bytes_done=500, files_done=3, current_file="x.mov")
+    run.status()
+    clock.now = 300
+    progress.write_text("{ half", encoding="utf-8")
+    run.status()
+    clock.now = 600
+    reading(progress, bytes_done=500, files_done=3, current_file="x.mov")
+    assert run.status()["stalled"] is not None
+
+
+def test_the_time_limit_comes_from_the_setting(tmp_path):
+    run, progress, clock = running(tmp_path, stall_seconds=60)
+    reading(progress, bytes_done=1, files_done=0, current_file="x.mov")
+    run.status()
+    clock.now = 60
+    assert run.status()["stalled"] == {"file": "x.mov", "minutes": 1}
+
+
+def test_a_check_that_has_ended_is_never_stuck(tmp_path):
+    run, progress, clock = running(tmp_path)
+    reading(progress, bytes_done=500, files_done=3, current_file="x.mov")
+    run.status()
+    clock.now = 900
+    run._state = "finished"
+    assert run.status()["stalled"] is None
