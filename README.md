@@ -1,5 +1,7 @@
 # ClearSum
 
+[![tests](https://github.com/Georgie995/clearsum/actions/workflows/tests.yml/badge.svg)](https://github.com/Georgie995/clearsum/actions/workflows/tests.yml) *Tests run on Windows after every change, and every Monday.*
+
 A calm, drag-and-drop Windows app for checking media deliveries.
 - **Add a delivery folder and its checksum manifest.** You get a plain answer: did every file arrive intact, and if not, which files and why.
 - **When there are problems,** a short incident note turns your answers into a ready-to-send email for your manager.

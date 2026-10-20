@@ -355,3 +355,15 @@ Each entry records the decision, the alternatives considered and why this one wa
   - **18 new tests:** 161 in total. These include the real window comparing two made-up list versions, searching, and a name that looks like web page code shown as plain text.
   - **8 protections broken on purpose,** and a test caught each one. One test was strengthened along the way, because its search was already lower case.
   - **Not tested automatically:** dragging a real file onto the two new cards, because a window test can't drag. Georgi tries that by hand.
+
+## 2026-10-20: Tests run on GitHub after every push, and every Monday
+
+- **Need:** Georgi asked which automations would genuinely improve the published tools (research in his private notes). This repo had no automatic tests on GitHub.
+- **Options:** (a) leave as is; (b) test on Windows; (c) test on Windows and Linux.
+- **Decision (Georgi, 2026-10-20):** (b), with Python 3.11 and 3.13: ClearSum is a Windows app, so a Linux result would claim something untrue. **Sibling repos (Georgi's choice):** each run fetches the latest delivery-desk and manifest-doctor (into `delivery-verify`) next to this repo, so the joined-up tests run on GitHub too, not only on the development PC. A change in a sibling can turn this repo's tests red; that is the point.
+  - **Every Monday at 06:00 UTC** the tests run again even if nothing was pushed, so a new Python version or a change in a sibling repo is noticed without anyone looking.
+  - **Safety:** read-only permissions, no secrets (so no AI call is possible), and only GitHub's own official actions.
+- **Known limits:**
+  - GitHub pauses scheduled runs in a repo with no activity for 60 days.
+  - **The packaged-app tests skip on GitHub,** because the app isn't built there.
+- **Tested by:** before pushing, each suite was run from fresh local clones laid out exactly as the workflow lays them out. A checker confirmed every workflow file follows the rules above, and each rule was broken on purpose once (write permission, no Monday run, a secret, a non-GitHub action, a wrong or missing sibling, the wrong machines); the checker caught every break. The workflow itself can only be fully proven on GitHub, by the first run after pushing.
