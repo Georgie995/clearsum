@@ -6,6 +6,7 @@ and checks Windows Credential Manager is reachable, without saving anything ther
 found to the given file, then closes.
 """
 
+import csv
 import hashlib
 import json
 import sys
@@ -81,13 +82,18 @@ def run(out):
         result["proved"] = (view.get("proves") or {}).get("proved")
         # Compare lists runs manifest-doctor's comparison inside the app, so prove it loads when packaged.
         earlier, later = work / "v1.md5", work / "v2.md5"
-        earlier.write_text(manifest.read_text(encoding="utf-8"), encoding="utf-8")
+        # A name that looks like a formula, in both lists: comparison.csv must show it as text (v0.2.1).
+        formula = f"{hashlib.md5(b'formula').hexdigest()}  =1+1\n"
+        earlier.write_text(manifest.read_text(encoding="utf-8") + formula, encoding="utf-8")
         later_files = {**files, "ShowA/clip_0002.mov": b"frames two, changed"}
-        later.write_text("".join(f"{hashlib.md5(d).hexdigest()}  {r}\n" for r, d in later_files.items()),
+        later.write_text("".join(f"{hashlib.md5(d).hexdigest()}  {r}\n" for r, d in later_files.items()) + formula,
                          encoding="utf-8")
         compared = bridge.compare_lists(str(earlier), str(later))
         result["compare_result"] = compared.get("result") or compared.get("error")
         result["compare_changed"] = (compared.get("counts") or {}).get("changed")
+        csv_file = work / "reports" / str(compared.get("compare_id")) / "comparison.csv"
+        with open(csv_file, encoding="utf-8-sig", newline="") as handle:
+            result["compare_csv_formula_as_text"] = "'=1+1" in {r["earlier_path"] for r in csv.DictReader(handle)}
         result["stall_minutes"] = bridge.get_settings()["values"]["stall_minutes"]
         Path(out).write_text(json.dumps(result, ensure_ascii=False, indent=1), encoding="utf-8")
         window.destroy()

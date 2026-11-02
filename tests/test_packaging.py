@@ -64,6 +64,8 @@ def test_the_built_app_passes_its_own_self_test(tmp_path):
                                 "checksums compared: 1 matched and 1 didn't.")
     assert (result["compare_result"], result["compare_changed"]) == ("THE LISTS DIFFER", 1)   # runs inside the app
     assert result["stall_minutes"] == 10
+    # v0.2.1: the bundled manifest-doctor shows a formula-like name as text in comparison.csv
+    assert result["compare_csv_formula_as_text"] is True
 
 
 @pytest.mark.skipif(not BUILT.exists(), reason="the app hasn't been built (packaging/build.py)")

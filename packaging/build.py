@@ -44,7 +44,7 @@ def main():
     print(json.dumps(result, indent=1))
     healthy = (result["frozen"] and result["web_files"] and result["keyring_backend"] == "WinVaultKeyring"
                and result["check_state"] == "finished" and result["tool_messages_seen"] and result["note_written"]
-               and result["compare_result"] == "THE LISTS DIFFER")
+               and result["compare_result"] == "THE LISTS DIFFER" and result["compare_csv_formula_as_text"])
     if not healthy:
         sys.exit("The packaged app failed its self-test: not zipped.")
     traces = local_traces(APP)

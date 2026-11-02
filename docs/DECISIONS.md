@@ -367,3 +367,10 @@ Each entry records the decision, the alternatives considered and why this one wa
   - GitHub pauses scheduled runs in a repo with no activity for 60 days.
   - **The packaged-app tests skip on GitHub,** because the app isn't built there.
 - **Tested by:** before pushing, each suite was run from fresh local clones laid out exactly as the workflow lays them out. A checker confirmed every workflow file follows the rules above, and each rule was broken on purpose once (write permission, no Monday run, a secret, a non-GitHub action, a wrong or missing sibling, the wrong machines); the checker caught every break. The workflow itself can only be fully proven on GitHub, by the first run after pushing.
+
+## 2026-11-02: Version 0.2.1 carries manifest-doctor's `comparison.csv` fix
+
+- **Found by:** a security review of ClearSum using an outside security-audit skill. The review found no problems in ClearSum's own code. Compare lists runs manifest-doctor, whose `comparison.csv` wrote names from someone else's list exactly as written. Georgi confirmed in Excel that a made-up name `=1+1` showed as `2`. manifest-doctor now puts a `'` in front of such names (its DECISIONS.md, 2026-11-02), and Georgi confirmed the fix in the app.
+- **Decision (Georgi, 2026-11-02):** rebuild as 0.2.1, so people who download ClearSum get the fix, not only people who run it from source.
+- **Safety:** the packaged app's self-test now also compares a list with a `=1+1` name and checks that `comparison.csv` shows it as text. `build.py` refuses to zip a build that fails this, so a zip can't ship with the old manifest-doctor inside.
+- **Tested by:** the packaged-app test was run first against the 0.2.0 build and failed, as it should. Then the 0.2.1 build passed it, along with the full suite.
